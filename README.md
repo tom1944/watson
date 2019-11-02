@@ -1,2 +1,2 @@
-# watson
-Watson, the detective assistant for Cluedo
+# Watson
+Watson, the assistant detective for Cluedo
