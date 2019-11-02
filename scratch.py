@@ -1,11 +1,13 @@
+from enum import Enum
+
 
 characterNames = {
-                    'geel' : "Van Geelen",
-                    'paars' : "Pimpel",
-                    'groen' : "Groenewoud",
-                    'blauw' : "Blaauw van Draet",
-                    'rood' : "Roodhart",
-                    'wit' : "De Wit"
+                    'geel': "Van Geelen",
+                    'paars': "Pimpel",
+                    'groen': "Groenewoud",
+                    'blauw': "Blaauw van Draet",
+                    'rood': "Roodhart",
+                    'wit': "De Wit"
                     }
 weaponNames = ['mes', 'kandelaar', 'pistool', 'vergif', 'trofee', 'touw', 'knuppel', 'bijl', 'halter']
 roomNames = ['hal', 'eetkamer', 'keuken', 'terras', 'werkkamer', 'theater', 'zitkamer', 'bubbelbad', 'gastenverblijf']
@@ -17,6 +19,7 @@ class Card:
         self.name = name
         self.category = category
 
+
 class Player:
     def __init__(self, name, character, cardAmount):
         self.name = name
@@ -24,16 +27,18 @@ class Player:
         self.cardAmount = cardAmount
 
 
-class Knowledge:
-    true = "True"
-    false = "False"
-    maybe = "Maybe"
+class Knowledge(Enum):
+    TRUE = "True"
+    FALSE = "False"
+    MAYBE = "Maybe"
 
+    @staticmethod
     def fromBool(boolean):
         if boolean:
-            return Knowledge.true
+            return Knowledge.TRUE
         else:
-            return Knowledge.false
+            return Knowledge.FALSE
+
 
 class Claim:
     def __init__(self, claimer, weapon, room, suspect):
@@ -42,7 +47,6 @@ class Claim:
         self.room = room
         self.suspect = suspect
         self.replies = {}  # player -> bool arrray       event.replies[Jan] = False; event.replies[Klaas] = False; event.replies[Mien] = True
-
 
     def getCards(self):
         return [self.weapon, self.room, self.suspect]
@@ -54,6 +58,7 @@ class Claim:
             return Knowledge.fromBool(self.replies[player])
         else:
             return Knowledge.maybe
+
 
 def getInput(prompt, possibilities):
     userInput = input(prompt)
@@ -89,10 +94,12 @@ weaponCards = [Card(c, "Weapon") for c in weaponNames]
 roomCards = [Card(c, "Room") for c in roomNames]
 allCards = characterCards + weaponCards + roomCards
 
+
 def matchCard(cardName):
     for card in allCards:
         if cardName == card.name:
             return card
+
 
 def startGame():
     playerDecks = {}
@@ -110,8 +117,6 @@ def startGame():
         playerDecks[thePlayer] = {}
         for card in allCards:
             playerDecks[thePlayer][card] = 'maybe'
-
-
 
     yourCards = getInput('Which cards do you have? (card 1, card 2, card 3, ...)', allNames)
     yourCards = [matchCard(c) for c in yourCards]
