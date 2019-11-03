@@ -1,5 +1,5 @@
 from enum import Enum
-
+import json
 
 characterNames = {
                     'geel': "Van Geelen",
@@ -13,6 +13,14 @@ weaponNames = ['mes', 'kandelaar', 'pistool', 'vergif', 'trofee', 'touw', 'knupp
 roomNames = ['hal', 'eetkamer', 'keuken', 'terras', 'werkkamer', 'theater', 'zitkamer', 'bubbelbad', 'gastenverblijf']
 allNames = list(characterNames.keys()) + list(characterNames.values()) + weaponNames + roomNames
 
+def getCategory(card_name):
+    if card_name in list(characterNames.keys()) + list(characterNames.values()):
+        return "Character"
+    if card_name in weaponNames:
+        return "Weapon"
+    if card_name in roomNames:
+        return "Room"
+
 
 class Card:
     def __init__(self, name, category):
@@ -21,10 +29,10 @@ class Card:
 
 
 class Player:
-    def __init__(self, name, character, cardAmount):
+    def __init__(self, name, character, card_amount):
         self.name = name
         self.character = character
-        self.cardAmount = cardAmount
+        self.cardAmount = card_amount
 
 
 class Knowledge(Enum):
@@ -101,32 +109,41 @@ def matchCard(cardName):
             return card
 
 
-def startGame():
-    playerDecks = {}
-    claimHistory = []
+def loadGameConfig():
+    with open("gameconfig.json", 'r') as file:
+        config = json.load(file)
+
+    players_json = config["players"]
+    open_cards_json = config["open_cards"]
+    your_cards_json = config["your_cards"]
+
     players = []
+    for player_json in players_json:
+        player = Player(
+            player_json["name"],
+            player_json["character"],
+            player_json["card_amount"]
+        )
+        players.append(player)
 
-    playerNames = input('Who are you and who are you playing with? (your name, player 2, player 3, ...)')
-    playerNames = playerNames.split(", ")
+    open_cards = []
+    for open_card_json in open_cards_json:
+        open_card = Card(
+            open_card_json,
+            getCategory(open_card_json)
+        )
+        open_cards.append(open_card)
 
-    for playerName in playerNames:
-        character = getInput('Which character is ' + playerName + '?', list(characterNames.keys()) + list(characterNames.values()))[0]
-        cardAmount = int(input('How many cards does ' + playerName + ' have?'))
-        thePlayer = Player(playerName,character,cardAmount)
-        players.append(thePlayer)
-        playerDecks[thePlayer] = {}
-        for card in allCards:
-            playerDecks[thePlayer][card] = 'maybe'
+    your_cards = []
+    for your_card_json in your_cards_json:
+        your_card = Card(
+            your_card_json,
+            getCategory(your_card_json)
+        )
+        your_cards.append(your_card)
 
-    yourCards = getInput('Which cards do you have? (card 1, card 2, card 3, ...)', allNames)
-    yourCards = [matchCard(c) for c in yourCards]
-    for card in yourCards:
-        playerDecks[players[0]][card]=Knowledge.maybe
-
-    for card in yourCards:
-        print(playerDecks[players[0]][card])
-
+    return players, open_cards, your_cards
 
 
 if __name__ == "__main__":
-    startGame()
+    loadGameConfig()
