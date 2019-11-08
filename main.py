@@ -1,15 +1,16 @@
 from gameconfig import loadGameConfig
 from gamestate import GameState
 from card import allCards
-import io
+import user_io
 
 if __name__ == "__main__":
-    players, open_card, your_cards = loadGameConfig()
+    players, open_cards, your_cards = loadGameConfig()
 
-    # todo: remove open cards from all cards
+    used_cards = [c for c in allCards if c not in open_cards]
     game_state = GameState(players, allCards)
+    # todo: add cards of current player
 
     while True:
-        rumour = io.get_info()
+        rumour = user_io.get_info()
         game_state.add_rumour(rumour)
-        io.print_gamestate(game_state)
+        user_io.print_game_state(game_state)
