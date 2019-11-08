@@ -29,7 +29,7 @@ class Rumour:
         self.weapon = weapon
         self.room = room
         self.suspect = suspect
-        self.replies = # List[(Player, Knowledge)]
+        self.replies = [] # List[(Player, Knowledge)]
 
     def getCards(self):
         return [self.weapon, self.room, self.suspect]
