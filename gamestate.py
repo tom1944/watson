@@ -33,8 +33,26 @@ class GameState:
             self.knowledge_tables[category] = table
         self.rumours = []
 
+    def add_card(self, player: Player, card: Card, knowledge: Knowledge):
+        category_table = self.knowledge_tables[card.category]
+        if category_table[player][card] != knowledge: #Check if knowledge is new
+            category_table[player][card] = knowledge
+            if knowledge == Knowledge.TRUE:           #Exclude other players if a player has a card
+                for other_player in self.players:
+                    if other_player != player:
+                        category_table[other_player][card] = Knowledge.FALSE
+
     def add_rumour(self, rumour):
         self.rumours.append(rumour)
+        for reply in rumour.replies:    #Set all cards to false if rumour is answered false
+            player, knowledge = reply
+            if knowledge == knowledge.FALSE:
+                add_card(player, rumour.weapon, knowledge)
+                add_card(player, rumour.room, knowledge)
+                add_card(player, rumour.character, knowledge)
+        deduce()
 
-    def add_card(self, player: Player, card: Card, knowledge: Knowledge):
-        self.knowledge_tables[card.category][player][card] = knowledge
+
+    def deduce(self):
+        #todo: add stub
+        pass

@@ -5,8 +5,6 @@ import io
 
 if __name__ == "__main__":
     players, open_card, your_cards = loadGameConfig()
-
-    # todo: remove open cards from all cards
     game_state = GameState(players, allCards)
 
     while True:
