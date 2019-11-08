@@ -3,6 +3,7 @@ from typing import List, NamedTuple, Tuple
 from knowledge import Knowledge
 from player import Player
 from card import Card
+from card import Category
 
 
 class Rumour(NamedTuple):
@@ -19,13 +20,21 @@ class Rumour(NamedTuple):
 class GameState:
     def __init__(self, players: List[Player], cards: List[Card]):
         self.players = players
-        self.knowledge_tables = []  # todo: init tables
+        self.cards = cards
+        self.knowledge_tables = {}
+        for category in Category:
+            table = {}
+            for player in players:
+                column = {}
+                for card in cards:
+                    if card.category == category:
+                        column[card] = Knowledge.MAYBE
+                table[player] = column
+            self.knowledge_tables[category] = table
         self.rumours = []
 
     def add_rumour(self, rumour):
-        # todo: stub
-        pass
+        self.rumours.append(rumour)
 
-    def add_card(self, player: Player, card: Card):
-        # todo: stub
-        pass
+    def add_card(self, player: Player, card: Card, knowledge: Knowledge):
+        self.knowledge_tables[card.category][player][card] = knowledge
