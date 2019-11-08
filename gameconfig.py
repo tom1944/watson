@@ -1,7 +1,7 @@
 import json
 
-from card import Card, get_category
-from main import Player
+from io import match_card
+from player import Player
 
 
 def loadGameConfig():
@@ -23,18 +23,12 @@ def loadGameConfig():
 
     open_cards = []
     for open_card_json in open_cards_json:
-        open_card = Card(
-            open_card_json,
-            get_category(open_card_json)
-        )
+        open_card = match_card(open_card_json)
         open_cards.append(open_card)
 
     your_cards = []
     for your_card_json in your_cards_json:
-        your_card = Card(
-            your_card_json,
-            get_category(your_card_json)
-        )
+        your_card = match_card(your_card_json)
         your_cards.append(your_card)
 
     return players, open_cards, your_cards
