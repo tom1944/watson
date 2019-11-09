@@ -15,12 +15,11 @@ characterNames = {
 
 def print_game_state(game_state: GameState):
     for category in Category:
-        for player in game_state.players:
-            print('{}'.format())
+        pass
 
 
 def print_table(table: List[List[str]]):
-    col_length = max(len(s) for col in table for s in col[1:])
+    col_length = max(len(s) for col in table[1:] for s in col)
 
     for i in range(len(table[0])):
         table[0][i] = '{:>16}'.format(table[0][i])
@@ -32,7 +31,7 @@ def print_table(table: List[List[str]]):
     for row in range(len(table[0])):
         for col in range(len(table)):
             plop(table[col][row] + ' ')
-            print('')
+        print('')
 
 
 def plop(s):
