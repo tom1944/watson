@@ -18,24 +18,37 @@ def print_game_state(game_state: GameState):
         pass
 
 
-def print_table(table: List[List[str]]):
-    col_length = max(len(s) for col in table[1:] for s in col)
+class Table:
+    def __init__(self, cols: int, rows: int):
+        self.cols = cols
+        self.rows = rows
+        self._t = [['' for _ in range(cols)] for _ in range(rows)]
 
-    for i in range(len(table[0])):
-        table[0][i] = '{:>16}'.format(table[0][i])
+    def get(self, col: int, row: int) -> str:
+        return self._t[row][col]
 
-    for col in table[1:]:
-        for i in range(len(col)):
-            col[i] = ('{:^' + str(col_length) + '}').format(col[i])
+    def set(self, col: int, row: int, s: str):
+        self._t[row][col] = s
 
-    for row in range(len(table[0])):
-        for col in range(len(table)):
-            plop(table[col][row] + ' ')
-        print('')
+    def transpose(self):
+        t2 = zip(*self._t)
+        self._t = list(map(list, t2))
 
+    def to_string(self) -> str:
+        first_col_length = max(len(self.get(0, row)) for row in range(self.rows))
+        other_col_length = 3 # max(len(self.get(col, row)) for col in range(1, self.cols) for row in range(self.rows))
 
-def plop(s):
-    print(s, end='')
+        sb = ''
+        for row in range(self.rows):
+            for col in range(self.rows):
+                if col == 0:
+                    s = ('{:>' + str(first_col_length) + '}').format(self.get(col, row)[:first_col_length])
+                else:
+                    s = ('{:^' + str(other_col_length) + '}').format(self.get(col, row)[:other_col_length])
+                sb += s + ' '
+            sb += '\n'
+
+        return sb
 
 
 def get_info() -> Rumour:
