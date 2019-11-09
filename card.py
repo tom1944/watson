@@ -13,8 +13,8 @@ class Card(NamedTuple):
     category: Category
 
 
-weaponNames = ['mes', 'kandelaar', 'pistool', 'vergif', 'trofee', 'touw', 'knuppel', 'bijl', 'halter']
-roomNames = ['hal', 'eetkamer', 'keuken', 'terras', 'werkkamer', 'theater', 'zitkamer', 'bubbelbad', 'gastenverblijf']
+weaponNames = ['Mes', 'Kandelaar', 'Pistool', 'Vergif', 'Trofee', 'Touw', 'Knuppel', 'Bijl', 'Halter']
+roomNames = ['Hal', 'Eetkamer', 'Keuken', 'Terras', 'Werkkamer', 'Theater', 'Zitkamer', 'Bubbelbad', 'Gastenverblijf']
 characterNames = ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
 
 characterCards = [Card(c, Category.CHARACTER) for c in characterNames]
