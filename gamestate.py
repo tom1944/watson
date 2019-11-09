@@ -47,10 +47,10 @@ class GameState:
         for reply in rumour.replies:    #Set all cards to false if rumour is answered false
             player, knowledge = reply
             if knowledge == knowledge.FALSE:
-                add_card(player, rumour.weapon, knowledge)
-                add_card(player, rumour.room, knowledge)
-                add_card(player, rumour.character, knowledge)
-        deduce()
+                self.add_card(player, rumour.weapon, knowledge)
+                self.add_card(player, rumour.room, knowledge)
+                self.add_card(player, rumour.character, knowledge)
+        self.deduce()
 
 
     def deduce(self):
