@@ -36,13 +36,13 @@ class GameState:
     def add_card(self, player: Player, card: Card, knowledge: Knowledge):
         category_table = self.knowledge_tables[card.category]
 
-        if category_table[player][card] != Knowledge.MAYBE:   # Check if knowledge is new
+        if category_table[player][card] is Knowledge.MAYBE:   # Check if knowledge is new
             category_table[player][card] = knowledge
 
             # Exclusion: Other players cannot have the same card
-            if knowledge == Knowledge.TRUE:           # Exclude other players if a player has a card
+            if knowledge is Knowledge.TRUE:           # Exclude other players if a player has a card
                 for other_player in self.players:
-                    if other_player != player:
+                    if other_player is not player:
                         category_table[other_player][card] = Knowledge.FALSE
 
             # Max cards: A player cannot have more cards than he has
@@ -51,14 +51,14 @@ class GameState:
             # Set all cards that a player does not have to FALSE
             if known_cards == player.cardAmount:
                 for card in self.cards:
-                    if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                    if self.knowledge_tables[card.category][player][card] is Knowledge.MAYBE:
                         self.add_card(player, card, Knowledge.FALSE)
 
             # Brute force the knowledge table on the rumours
             for category in Category:
                 for player in self.players:
                     for card in self.cards:
-                        if self.knowledge_tables[category][player][card] == Knowledge.MAYBE:
+                        if self.knowledge_tables[category][player][card] is Knowledge.MAYBE:
 
                             self.knowledge_tables[category][player][card] = Knowledge.TRUE  # Try to fill in true
                             if not self.has_solution(self.knowledge_tables[category][player][card]):
@@ -72,7 +72,7 @@ class GameState:
                                 self.knowledge_tables[category][player][card] = Knowledge.MAYBE
 
         else:
-            raise Exception(f'Contradiction in table {card.category} player {player.name} card {card.name}')
+            raise Exception(f'Contradiction in table {card.category.value} player {player.name} card {card.name}')
 
     def add_rumour(self, rumour):
         self.rumours.append(rumour)
