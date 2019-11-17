@@ -11,6 +11,6 @@ if __name__ == "__main__":
     # todo: add cards of current player
 
     while True:
-        rumour = user_io.get_info()
+        rumour = user_io.get_info(game_state)
         game_state.add_rumour(rumour)
         user_io.print_game_state(game_state)

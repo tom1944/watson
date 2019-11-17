@@ -1,7 +1,7 @@
 from card import Card, allCards, Category
 from gamestate import GameState, Rumour, Player
 from knowledge import Knowledge
-from typing import List, Any, NamedTuple, Dict
+from typing import List, Any, Dict, Callable
 
 characterNames = {
                     'geel': "Van Geelen",
@@ -89,8 +89,46 @@ class Table:
         return sb
 
 
-def get_info() -> Rumour:
-    input('give input:')
+def get_info(game_state: GameState) -> Rumour:
+    rumour = get_rumour_claim(game_state)
+    while True:
+        if get_input_string_from_set('Is there another reply? ', ['y', 'n'], lambda x: x) == 'n':
+            break
+        player = get_input_string_from_set('Who gives the reply? ', game_state.players, lambda p: p.name)
+        reply = get_input_string_from_set('Does replier show a card? ', ['y', 'n'], lambda x: x) == 'n'
+        if reply == 'y':
+            knowledge = Knowledge.TRUE
+        else:
+            knowledge = Knowledge.FALSE
+        rumour.replies.append((player, knowledge))
+    return rumour
+
+
+def get_rumour_claim(game_state: GameState) -> Rumour:
+    player = get_input_string_from_set('Who is on the turn? ', game_state.players, lambda p: p.name)
+    room = get_input_string_from_set('Room? ', [c for c in game_state.cards if c.category == Category.ROOM],
+                                     lambda c: c.name)
+    suspect = get_input_string_from_set('Suspect? ',
+                                        [c for c in game_state.cards if c.category == Category.CHARACTER],
+                                        lambda c: c.name)
+    weapon = get_input_string_from_set('Weapon? ', [c for c in game_state.cards if c.category == Category.WEAPON],
+                                       lambda p: p.name)
+    return Rumour(player, weapon, room, suspect, [])
+
+
+def get_input_string_from_set(msg: str, input_set: List[Any], get_str_function: Callable[[Any], str]) -> Any:
+    allowed_input_strings = [get_str_function(i) for i in input_set] + ['exit']
+    while True:
+        input_string = input(msg)
+        if input_string == 'exit':
+            raise Exception('exit from input function')  # todo: change this to not use Exceptions for normal control flow
+        matches = [i for i in input_set if get_str_function(i) == input_string]
+        if len(matches) == 0:
+            print('choose one of ', ', '.join(allowed_input_strings))
+        elif len(matches) == 1:
+            return matches[0]
+        else:
+            print(f'Input {input_string} ambiguous. Input set: {input_set}')
 
 
 def match_card(card_name: str) -> Card:
