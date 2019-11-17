@@ -90,6 +90,14 @@ class Table:
 
 
 def get_info(game_state: GameState) -> Rumour:
+    while True:
+        try:
+            return get_rumour(game_state)
+        except ExitException:
+            pass
+
+
+def get_rumour(game_state):
     rumour = get_rumour_claim(game_state)
     while True:
         if get_input_string_from_set('Is there another reply? ', ['y', 'n'], lambda x: x) == 'n':
@@ -116,19 +124,26 @@ def get_rumour_claim(game_state: GameState) -> Rumour:
     return Rumour(player, weapon, room, suspect, [])
 
 
+class ExitException(Exception):
+    pass
+
+
 def get_input_string_from_set(msg: str, input_set: List[Any], get_str_function: Callable[[Any], str]) -> Any:
-    allowed_input_strings = [get_str_function(i) for i in input_set] + ['exit']
+    allowed_input_strings = [get_str_function(i) for i in input_set]
+    allowed_input_strings.sort()
+    allowed_input_strings.append('exit')
     while True:
         input_string = input(msg)
         if input_string == 'exit':
-            raise Exception('exit from input function')  # todo: change this to not use Exceptions for normal control flow
-        matches = [i for i in input_set if get_str_function(i) == input_string]
+            raise ExitException
+        matches = [i for i in input_set if get_str_function(i).lower().startswith(input_string.lower())]
         if len(matches) == 0:
-            print('choose one of ', ', '.join(allowed_input_strings))
+            print('Choose one of ', ', '.join(allowed_input_strings))
         elif len(matches) == 1:
+            print(get_str_function(matches[0]))
             return matches[0]
         else:
-            print(f'Input {input_string} ambiguous. Input set: {input_set}')
+            print(f'Input {input_string} ambiguous. Choose one of: {", ".join(allowed_input_strings)}')
 
 
 def match_card(card_name: str) -> Card:
