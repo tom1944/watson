@@ -36,32 +36,29 @@ class GameState:
     def add_card(self, player: Player, card: Card, knowledge: Knowledge):
         category_table = self.knowledge_tables[card.category]
 
-        if category_table[player][card] != Knowledge.MAYBE:   # Check if knowledge is new
+        if category_table[player][card] is Knowledge.MAYBE:   # Check if knowledge is new
             category_table[player][card] = knowledge
 
             # Exclusion: Other players cannot have the same card
-            if knowledge == Knowledge.TRUE:           # Exclude other players if a player has a card
+            if knowledge is Knowledge.TRUE:           # Exclude other players if a player has a card
                 for other_player in self.players:
-                    if other_player != player:
+                    if other_player is not player:
                         category_table[other_player][card] = Knowledge.FALSE
 
             # Max cards: A player cannot have more cards than he has
-            known_cards = 0
-            for category in Category:   # Count known cards
-                known_cards = known_cards + sum(value == Knowledge.TRUE
-                                                for value in self.knowledge_tables[category][player].values())
+            known_cards = self.known_cards(player)
 
             # Set all cards that a player does not have to FALSE
             if known_cards == player.cardAmount:
                 for card in self.cards:
-                    if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                    if self.knowledge_tables[card.category][player][card] is Knowledge.MAYBE:
                         self.add_card(player, card, Knowledge.FALSE)
 
             # Brute force the knowledge table on the rumours
             for category in Category:
                 for player in self.players:
                     for card in self.cards:
-                        if self.knowledge_tables[category][player][card] == Knowledge.MAYBE:
+                        if self.knowledge_tables[category][player][card] is Knowledge.MAYBE:
 
                             self.knowledge_tables[category][player][card] = Knowledge.TRUE  # Try to fill in true
                             if not self.has_solution(self.knowledge_tables[category][player][card]):
@@ -74,18 +71,39 @@ class GameState:
                             else:
                                 self.knowledge_tables[category][player][card] = Knowledge.MAYBE
 
-
         else:
-            raise Exception(f'Contradiction in table {card.category} player {player.name} card {card.name}')
+            raise Exception(f'Contradiction in table {card.category.value} player {player.name} card {card.name}')
 
     def add_rumour(self, rumour):
         self.rumours.append(rumour)
-        for reply in rumour.replies:    # Set all cards to false if rumour is answered false
+        weapon = rumour.weapon
+        room = rumour.room
+        suspect = rumour.suspect
+
+        for reply in rumour.replies:
             player, knowledge = reply
-            if knowledge == knowledge.FALSE:
-                self.add_card(player, rumour.weapon, knowledge)
-                self.add_card(player, rumour.room, knowledge)
-                self.add_card(player, rumour.suspect, knowledge)
+            if knowledge == knowledge.FALSE:    # Set all cards to false if rumour is answered false
+                self.add_card(player, weapon, knowledge)
+                self.add_card(player, room, knowledge)
+                self.add_card(player, suspect, knowledge)
+
+            if knowledge == knowledge.TRUE: # Fill in last piece if player does not have 2 out of 3
+                if self.knowledge_tables[weapon.category][player][weapon] == knowledge.FALSE and \
+                        self.knowledge_tables[room.category][player][room] == knowledge.FALSE:
+                    self.add_card(player, suspect, knowledge.TRUE)
+                if self.knowledge_tables[suspect.category][player][suspect] == knowledge.FALSE and \
+                        self.knowledge_tables[weapon.category][player][weapon] == knowledge.FALSE:
+                    self.add_card(player, suspect, knowledge.TRUE)
+                if self.knowledge_tables[room.category][player][room] == knowledge.FALSE and \
+                        self.knowledge_tables[suspect.category][player][suspect] == knowledge.FALSE:
+                    self.add_card(weapon, suspect, knowledge.TRUE)
+
+    def known_cards(self, player: Player):
+        known_cards = 0
+        for category in Category:  # Count known cards
+            known_cards = known_cards + sum(value == Knowledge.TRUE
+                                            for value in self.knowledge_tables[category][player].values())
+        return known_cards
 
     def has_solution(self, brute_knowledge_tables) -> bool:
         # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings

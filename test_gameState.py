@@ -15,7 +15,7 @@ def init_test():
 class TestGameState(TestCase):
     def test_add_card(self):
         game_state = init_test()
-        test_card = match_card("knuppel")
+        test_card = match_card("Knuppel")
         test_player = game_state.players[0]
         game_state.add_card(test_player, test_card, Knowledge.TRUE)
         for player in game_state.players:
@@ -28,13 +28,14 @@ class TestGameState(TestCase):
     def test_add_rumour(self):
         game_state = init_test()
         test_player = game_state.players[1]
-        test_weapon = match_card("kandelaar")
-        test_room = match_card("hal")
+        game_state.add_card(game_state.players[2], match_card("Kandelaar"), Knowledge.FALSE)
+        game_state.add_card(game_state.players[2], match_card("Hal"), Knowledge.FALSE)
+        test_weapon = match_card("Kandelaar")
+        test_room = match_card("Hal")
         test_character = match_card("Pimpel")
-        test_replies = [(game_state.players[0], Knowledge.FALSE), (game_state.players[2], Knowledge.FALSE)]
+        test_replies = [(game_state.players[0], Knowledge.FALSE), (game_state.players[2], Knowledge.TRUE)]
         test_rumour = Rumour(test_player, test_weapon, test_room, test_character, test_replies)
         game_state.add_rumour(test_rumour)
-        test_line = 1
 
     def test_deduce(self):
         self.fail()
