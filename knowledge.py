@@ -7,7 +7,7 @@ class Knowledge(Enum):
     MAYBE = "Maybe"
 
     @staticmethod
-    def fromBool(boolean):
+    def from_bool(boolean):
         if boolean:
             return Knowledge.TRUE
         else:

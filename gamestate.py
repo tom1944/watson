@@ -47,7 +47,7 @@ class GameState:
     def add_card(self, player: Player, card: Card, knowledge: Knowledge):
         category_table = self.knowledge_tables[card.category]
 
-        if category_table[player][card] != Knowledge.MAYBE:   # Check if knowledge is new
+        if category_table[player][card] != Knowledge.MAYBE:
             if category_table[player][card] != knowledge:
                 raise Exception(
                     f'Contradiction in table {card.category} player {player.name} card {card.name} '

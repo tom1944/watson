@@ -27,5 +27,11 @@
     "Keuken",
     "Theater",
     "Knuppel"
-  ]
+  ],
+
+  "all_cards": {
+    "Weapon": ["Mes", "Kandelaar", "Pistool", "Vergif", "Troffee", "Touw", "Knuppel", "Bijl", "Halter"],
+    "Room": ["Hal", "Eetkamer", "Keuken", "Terras", "Werkkamer", "Theater", "Zitkamer", "Bubbelbad", "Gastenverblijf"],
+    "Character": ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
+  }
 }

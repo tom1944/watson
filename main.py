@@ -1,10 +1,10 @@
-from gameconfig import loadGameConfig
+from gameconfig import load_game_config
 from gamestate import GameState
 from card import allCards
 import user_io
 
 if __name__ == "__main__":
-    players, open_cards, your_cards = loadGameConfig()
+    players, open_cards, your_cards = load_game_config()
 
     used_cards = [c for c in allCards if c not in open_cards]
     game_state = GameState(players, used_cards)

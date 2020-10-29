@@ -13,6 +13,13 @@ class Card(NamedTuple):
     category: Category
 
 
+def cat_from_string(category_name: str) -> Category:
+    for cat in Category:
+        if category_name == cat.value:
+            return cat
+    raise Exception(f'Category name "{category_name}" invalid')
+
+
 weaponNames = ['Mes', 'Kandelaar', 'Pistool', 'Vergif', 'Troffee', 'Touw', 'Knuppel', 'Bijl', 'Halter']
 roomNames = ['Hal', 'Eetkamer', 'Keuken', 'Terras', 'Werkkamer', 'Theater', 'Zitkamer', 'Bubbelbad', 'Gastenverblijf']
 characterNames = ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
