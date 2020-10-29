@@ -13,7 +13,7 @@ characterNames = {
                     }
 
 
-def print_game_state(game_state: GameState):
+def game_state_to_string(game_state: GameState) -> str:
     k_table: Dict[Player, Dict[Card, Knowledge]] = {}
 
     for player in game_state.players:
@@ -22,9 +22,11 @@ def print_game_state(game_state: GameState):
             column[card] = game_state.knowledge_tables[card.category][player][card]
         k_table[player] = column
 
+    lines = []
     for category in Category:
         cat_cards = [card for card in game_state.cards if card.category == category]
-        print(print_category_table(cat_cards, game_state, k_table))
+        lines.append(print_category_table(cat_cards, game_state, k_table))
+    return "\n".join(lines)
 
 
 def print_category_table(category_cards, game_state, k_table):
