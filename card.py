@@ -28,5 +28,5 @@ characterCards = [Card(c, Category.CHARACTER) for c in characterNames]
 weaponCards = [Card(c, Category.WEAPON) for c in weaponNames]
 roomCards = [Card(c, Category.ROOM) for c in roomNames]
 allCards = characterCards + weaponCards + roomCards
-
+usedCards = []
 

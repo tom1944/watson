@@ -147,8 +147,6 @@ class GameState:
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
         for player in self.players:
             for card in self.cards:
-                if card not in self.knowledge_tables[card.category][player]:
-                    print("asdf")
                 if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
                     return card.category, player, card
         return None
