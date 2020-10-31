@@ -63,16 +63,15 @@ class GameState:
                     category_table[other_player][card] = Knowledge.FALSE
 
         # Max cards: A player cannot have more cards than he has
-        known_cards = 0
-        for category in Category:   # Count known cards
-            known_cards = known_cards + sum(value == Knowledge.TRUE
-                                            for value in self.knowledge_tables[category][player].values())
-
-        # Set all cards that a player does not have to FALSE
-        if known_cards == player.cardAmount:
+        for player in self.players:   # Count known cards
+            known_cards = 0
             for card in self.cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
-                    self.add_card(player, card, Knowledge.FALSE)
+                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                    known_cards += 1
+            if known_cards == player.cardAmount:
+                for card in self.cards:
+                    if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                        self.add_card(player, card, Knowledge.FALSE)
 
         # Brute force the knowledge table on the rumours
         for player in self.players:
