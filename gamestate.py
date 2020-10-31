@@ -44,7 +44,7 @@ class GameState:
             self.knowledge_tables[category] = table
         self.rumours = []
 
-    def add_card(self, player: Player, card: Card, knowledge: Knowledge):
+    def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         category_table = self.knowledge_tables[card.category]
 
         if category_table[player][card] != Knowledge.MAYBE:
@@ -71,7 +71,7 @@ class GameState:
             if known_cards == player.cardAmount:
                 for card in self.cards:
                     if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
-                        self.add_card(player, card, Knowledge.FALSE)
+                        self.add_knowledge(player, card, Knowledge.FALSE)
 
         # Brute force the knowledge table on the rumours
         for player in self.players:
@@ -81,13 +81,13 @@ class GameState:
                     self.knowledge_tables[card.category][player][card] = Knowledge.TRUE  # Try to fill in true
                     if not self.has_solution(self.knowledge_tables):
                         self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
-                        self.add_card(player, card, Knowledge.FALSE)
+                        self.add_knowledge(player, card, Knowledge.FALSE)
                         continue
 
                     self.knowledge_tables[card.category][player][card] = Knowledge.FALSE  # Try to fill in false
                     if not self.has_solution(self.knowledge_tables):
                         self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
-                        self.add_card(player, card, Knowledge.TRUE)
+                        self.add_knowledge(player, card, Knowledge.TRUE)
                     else:
                         self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
 
@@ -96,9 +96,9 @@ class GameState:
         for reply in rumour.replies:    # Set all cards to false if rumour is answered false
             player, knowledge = reply
             if knowledge == Knowledge.FALSE:
-                self.add_card(player, rumour.weapon, knowledge)
-                self.add_card(player, rumour.room, knowledge)
-                self.add_card(player, rumour.suspect, knowledge)
+                self.add_knowledge(player, rumour.weapon, knowledge)
+                self.add_knowledge(player, rumour.room, knowledge)
+                self.add_knowledge(player, rumour.suspect, knowledge)
 
     def has_solution(self, brute_knowledge_tables: KnowledgeTables) -> bool:
         # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings

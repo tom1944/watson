@@ -30,7 +30,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_print_game_state(self):
         gs = init_game_state()
-        gs.add_card(gs.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+        gs.add_knowledge(gs.players[0], Cards.KNUPPEL, Knowledge.TRUE)
         self.assertTrue(True)
 
 

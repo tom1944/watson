@@ -195,7 +195,6 @@ class TestGameState(TestCase):
         assert game_state.has_solution(knowledge_tables) is False
 
     def test_has_solution_triplet(self):
-        self.fail()
         game_state = self.empty_game_state
         knowledge_tables = game_state.knowledge_tables
 
@@ -242,7 +241,7 @@ class TestGameState(TestCase):
 
     def test_add_card(self):
         game_state = self.empty_game_state
-        game_state.add_card(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+        game_state.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
 
         for player in game_state.players:
             knowledge = game_state.knowledge_tables[Category.WEAPON][player][Cards.KNUPPEL]
@@ -254,8 +253,8 @@ class TestGameState(TestCase):
     def test_add_rumour(self):
         game_state = self.empty_game_state
 
-        game_state.add_card(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
-        game_state.add_card(game_state.players[2], Cards.HAL, Knowledge.FALSE)
+        game_state.add_knowledge(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
+        game_state.add_knowledge(game_state.players[2], Cards.HAL, Knowledge.FALSE)
 
         test_rumour = Rumour(
             game_state.players[1],
