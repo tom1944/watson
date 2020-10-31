@@ -123,6 +123,12 @@ class TestGameState(TestCase):
 
         assert not game_state.check_knowledge(game_state.knowledge_tables)
 
+    def test_check_knowledge_card_amount(self):
+        game_state = self.full_game_state
+        game_state.knowledge_tables[Category.CHARACTER][game_state.players[0]][match_card("Pimpel")] = Knowledge.TRUE
+        game_state.knowledge_tables[Category.CHARACTER][game_state.players[1]][match_card("Pimpel")] = Knowledge.FALSE
+        assert not game_state.check_knowledge(game_state.knowledge_tables)
+
     def test_has_solution_trivial(self):
         game_state = self.empty_game_state
         knowledge_tables = game_state.knowledge_tables
