@@ -1,4 +1,4 @@
-from unittest import TestCase
+from unittest import TestCase, skip
 from gamestate import GameState, Rumour
 from gameconfig import load_game_config
 from card import Category, Cards
@@ -194,6 +194,7 @@ class TestGameState(TestCase):
         knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.FALSE
         assert game_state.has_solution(knowledge_tables) is False
 
+    @skip
     def test_has_solution_triplet(self):
         game_state = self.empty_game_state
         knowledge_tables = game_state.knowledge_tables
