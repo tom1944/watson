@@ -1,19 +1,18 @@
 import json
 
-from user_io import match_card
 from player import Player
 from card import Card, Category, cat_from_string
 from typing import List, NamedTuple
 
 
 class GameConfig(NamedTuple):
-    players: Player
+    players: List[Player]
     open_cards: List[Card]
     your_cards: List[Card]
-    all_cards: List[Card]
+    used_cards: List[Card]
 
 
-def load_game_config():
+def load_game_config() -> GameConfig:
     with open("gameconfig.json", 'r') as file:
         config = json.load(file)
 
@@ -41,15 +40,17 @@ def load_game_config():
 
     open_cards = []
     for open_card_json in open_cards_json:
-        open_card = match_card(open_card_json)
+        open_card = find_card_by_name(open_card_json, all_cards)
         open_cards.append(open_card)
+
+    used_cards = [c for c in all_cards if c not in open_cards]
 
     your_cards = []
     for your_card_json in your_cards_json:
-        your_card = match_card(your_card_json)
+        your_card = find_card_by_name(your_card_json, all_cards)
         your_cards.append(your_card)
 
-    return GameConfig(players, open_cards, your_cards, all_cards)
+    return GameConfig(players, open_cards, your_cards, used_cards)
 
 
 def check_if_all_categories_present(all_cards_json) -> None:
@@ -58,3 +59,10 @@ def check_if_all_categories_present(all_cards_json) -> None:
     if json_categories != should_be_categories:
         raise Exception(f"One or more categories are incorrect."
                         f"Categories found: {json_categories}, should be {should_be_categories}")
+
+
+def find_card_by_name(card_name: str, cards: List[Card]) -> Card:
+    for card in cards:
+        if card_name == card.name:
+            return card
+    raise Exception(f'card {card_name} not found')

@@ -1,4 +1,4 @@
-from card import Card, allCards, Category
+from card import Card, Category
 from gamestate import GameState, Rumour, Player
 from knowledge import Knowledge
 from typing import List, Any, Dict, Callable
@@ -146,10 +146,3 @@ def get_input_string_from_set(msg: str, input_set: List[Any], get_str_function: 
             return matches[0]
         else:
             print(f'Input {input_string} ambiguous. Choose one of: {", ".join(allowed_input_strings)}')
-
-
-def match_card(card_name: str) -> Card:
-    for card in allCards:
-        if card_name == card.name:
-            return card
-    raise Exception(f'card {card_name} not found')
