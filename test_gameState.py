@@ -241,29 +241,35 @@ class TestGameState(TestCase):
         assert not game_state.has_solution(knowledge_tables)
 
     def test_add_card(self):
-        game_state = init_game_state()
-        test_card = Cards.KNUPPEL
-        test_player = game_state.players[0]
-        game_state.add_card(test_player, test_card, Knowledge.TRUE)
+        game_state = self.empty_game_state
+        game_state.add_card(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+
         for player in game_state.players:
-            knowledge = game_state.knowledge_tables[Category.WEAPON][player][test_card]
-            if player == test_player:
+            knowledge = game_state.knowledge_tables[Category.WEAPON][player][Cards.KNUPPEL]
+            if player == game_state.players[0]:
                 self.assertEqual(knowledge, Knowledge.TRUE)
             else:
                 self.assertEqual(knowledge, Knowledge.FALSE)
 
     def test_add_rumour(self):
-        game_state = init_game_state()
-        test_player = game_state.players[1]
+        game_state = self.empty_game_state
 
         game_state.add_card(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
         game_state.add_card(game_state.players[2], Cards.HAL, Knowledge.FALSE)
 
-        test_weapon = Cards.KANDELAAR
-        test_room = Cards.HAL
-        test_character = Cards.PIMPEL
-
-        test_replies = [(game_state.players[0], Knowledge.FALSE), (game_state.players[2], Knowledge.TRUE)]
-        test_rumour = Rumour(test_player, test_weapon, test_room, test_character, test_replies)
+        test_rumour = Rumour(
+            game_state.players[1],
+            Cards.KANDELAAR,
+            Cards.HAL,
+            Cards.PIMPEL,
+            [
+                (game_state.players[0], Knowledge.FALSE),
+                (game_state.players[2], Knowledge.TRUE)
+            ]
+        )
 
         game_state.add_rumour(test_rumour)
+        self.assertEqual(
+            game_state.knowledge_tables[Category.CHARACTER][game_state.players[2]][Cards.PIMPEL],
+            Knowledge.TRUE
+        )
