@@ -124,6 +124,7 @@ class GameState:
 
     def check_knowledge(self, test_tables: KnowledgeTables) -> bool:
         # Checks whether given knowledge tables might comply with given rumours
+        # Checks whether maximum number of cards is not exceeded
 
         for rumour in self.rumours:
             rumour_cards = rumour.get_cards()
@@ -142,6 +143,14 @@ class GameState:
                             break
                     if not true_or_maybe_found:
                         return False
+
+        for player in self.players:
+            card_amount = 0
+            for card in self.cards:
+                if test_tables[card.category][player][card] == Knowledge.TRUE:
+                    card_amount += 1
+            if card_amount > player.cardAmount:
+                return False
         return True
 
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:

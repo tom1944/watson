@@ -123,11 +123,14 @@ class TestGameState(TestCase):
 
         assert not game_state.check_knowledge(game_state.knowledge_tables)
 
-    def test_has_solution(self):
+    def test_has_solution_trivial(self):
         game_state = self.empty_game_state
         knowledge_tables = game_state.knowledge_tables
         assert game_state.has_solution(knowledge_tables) is True   # Trivial
 
+    def test_has_solution_basic(self):
+        game_state = self.empty_game_state
+        knowledge_tables = game_state.knowledge_tables
         rum1 = Rumour(
             game_state.players[0],
             match_card("Kandelaar"),
@@ -154,15 +157,103 @@ class TestGameState(TestCase):
 
         assert game_state.has_solution(knowledge_tables) is True
 
+    def test_has_solution_false_negative(self):
+        game_state = self.empty_game_state
+        knowledge_tables = game_state.knowledge_tables
+
+        rum1 = Rumour(
+            game_state.players[0],
+            match_card("Kandelaar"),
+            match_card("Bubbelbad"),
+            match_card("De Wit"),
+            [
+                (game_state.players[1], Knowledge.FALSE),
+                (game_state.players[2], Knowledge.TRUE)
+            ]
+        )
+
+        game_state.rumours = [rum1]
         knowledge_tables[Category.ROOM][game_state.players[1]][match_card("Bubbelbad")] = Knowledge.TRUE
         assert game_state.has_solution(knowledge_tables) is False
 
-        knowledge_tables[Category.ROOM][game_state.players[1]][match_card("Bubbelbad")] = Knowledge.MAYBE
+    def test_has_solution_false_positive(self):
+        game_state = self.empty_game_state
+        knowledge_tables = game_state.knowledge_tables
+
+        rum1 = Rumour(
+            game_state.players[0],
+            match_card("Kandelaar"),
+            match_card("Bubbelbad"),
+            match_card("De Wit"),
+            [
+                (game_state.players[1], Knowledge.FALSE),
+                (game_state.players[2], Knowledge.TRUE)
+            ]
+        )
+
+        rum2 = Rumour(
+            game_state.players[1],
+            match_card("Halter"),
+            match_card("Hal"),
+            match_card("Pimpel"),
+            [
+                (game_state.players[0], Knowledge.TRUE),
+                (game_state.players[2], Knowledge.FALSE)
+            ]
+        )
+
+        game_state.rumours = [rum1, rum2]
 
         knowledge_tables[Category.WEAPON][game_state.players[0]][match_card("Halter")] = Knowledge.FALSE
         knowledge_tables[Category.ROOM][game_state.players[0]][match_card("Hal")] = Knowledge.FALSE
         knowledge_tables[Category.CHARACTER][game_state.players[0]][match_card("Pimpel")] = Knowledge.FALSE
         assert game_state.has_solution(knowledge_tables) is False
+
+    def test_has_solution_triplet(self):
+        self.fail()
+        game_state = self.empty_game_state
+        knowledge_tables = game_state.knowledge_tables
+
+        rum1 = Rumour(
+            game_state.players[0],
+            match_card("Halter"),
+            match_card("Gastenverblijf"),
+            match_card("De Wit"),
+            [
+                (game_state.players[1], Knowledge.TRUE),
+                (game_state.players[2], Knowledge.FALSE)
+            ]
+        )
+
+        rum2 = Rumour(
+            game_state.players[0],
+            match_card("Halter"),
+            match_card("Gastenverblijf"),
+            match_card("Roodhart"),
+            [
+                (game_state.players[1], Knowledge.TRUE),
+                (game_state.players[2], Knowledge.FALSE)
+            ]
+        )
+
+        rum3 = Rumour(
+            game_state.players[0],
+            match_card("Halter"),
+            match_card("Gastenverblijf"),
+            match_card("Blaauw van Draet"),
+            [
+                (game_state.players[1], Knowledge.TRUE),
+                (game_state.players[2], Knowledge.FALSE)
+            ]
+        )
+        game_state.rumours = [rum1, rum2, rum3]
+        knowledge_tables[Category.WEAPON][game_state.players[1]][match_card("Halter")] = Knowledge.FALSE
+        knowledge_tables[Category.ROOM][game_state.players[1]][match_card("Gastenverblijf")] = Knowledge.FALSE
+        knowledge_tables[Category.WEAPON][game_state.players[1]][match_card("Vergif")] = Knowledge.TRUE
+        knowledge_tables[Category.WEAPON][game_state.players[1]][match_card("Touw")] = Knowledge.TRUE
+        knowledge_tables[Category.WEAPON][game_state.players[1]][match_card("Knuppel")] = Knowledge.TRUE
+        knowledge_tables[Category.ROOM][game_state.players[1]][match_card("Bubbelbad")] = Knowledge.TRUE
+        assert not game_state.has_solution(knowledge_tables)
 
     def test_add_card(self):
         game_state = init_game_state()

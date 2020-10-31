@@ -3,15 +3,15 @@
     {
       "name": "Tom",
       "character": "Roodhart",
-      "card_amount": 7
+      "card_amount": 6
     },{
       "name": "Menno",
       "character": "Blaauw van Draet",
-      "card_amount": 7
+      "card_amount": 6
     },{
       "name": "Michiel",
       "character": "De Wit",
-      "card_amount": 7
+      "card_amount": 6
     }
   ],
 
