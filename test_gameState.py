@@ -110,8 +110,7 @@ class TestGameState(TestCase):
 
     def test_has_solution_trivial(self):
         game_state = self.empty_game_state
-        knowledge_tables = game_state.knowledge_tables
-        assert game_state.has_solution(knowledge_tables) is True   # Trivial
+        assert game_state.has_solution() is True   # Trivial
 
     def test_has_solution_basic(self):
         game_state = self.empty_game_state
@@ -140,7 +139,7 @@ class TestGameState(TestCase):
 
         game_state.rumours = [rum1, rum2]
 
-        assert game_state.has_solution(knowledge_tables) is True
+        assert game_state.has_solution() is True
 
     def test_has_solution_false_negative(self):
         game_state = self.empty_game_state
@@ -159,7 +158,7 @@ class TestGameState(TestCase):
 
         game_state.rumours = [rum1]
         knowledge_tables[Category.ROOM][game_state.players[1]][Cards.BUBBELBAD] = Knowledge.TRUE
-        assert game_state.has_solution(knowledge_tables) is False
+        assert game_state.has_solution() is False
 
     def test_has_solution_false_positive(self):
         game_state = self.empty_game_state
@@ -192,7 +191,7 @@ class TestGameState(TestCase):
         knowledge_tables[Category.WEAPON][game_state.players[0]][Cards.HALTER] = Knowledge.FALSE
         knowledge_tables[Category.ROOM][game_state.players[0]][Cards.HAL] = Knowledge.FALSE
         knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.FALSE
-        assert game_state.has_solution(knowledge_tables) is False
+        assert game_state.has_solution() is False
 
     @skip
     def test_has_solution_triplet(self):
@@ -238,7 +237,7 @@ class TestGameState(TestCase):
         knowledge_tables[Category.WEAPON][game_state.players[1]][Cards.TOUW] = Knowledge.TRUE
         knowledge_tables[Category.WEAPON][game_state.players[1]][Cards.KNUPPEL] = Knowledge.TRUE
         knowledge_tables[Category.ROOM][game_state.players[1]][Cards.BUBBELBAD] = Knowledge.TRUE
-        assert not game_state.has_solution(knowledge_tables)
+        assert not game_state.has_solution()
 
     def test_add_card(self):
         game_state = self.empty_game_state

@@ -84,13 +84,13 @@ class GameState:
                 if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
 
                     self.knowledge_tables[card.category][player][card] = Knowledge.TRUE  # Try to fill in true
-                    if not self.has_solution(self.knowledge_tables):
+                    if not self.has_solution():
                         self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
                         self.add_knowledge(player, card, Knowledge.FALSE)
                         continue
 
                     self.knowledge_tables[card.category][player][card] = Knowledge.FALSE  # Try to fill in false
-                    if not self.has_solution(self.knowledge_tables):
+                    if not self.has_solution():
                         self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
                         self.add_knowledge(player, card, Knowledge.TRUE)
                     else:
@@ -105,25 +105,25 @@ class GameState:
                 self.add_knowledge(player, rumour.room, knowledge)
                 self.add_knowledge(player, rumour.suspect, knowledge)
 
-    def has_solution(self, brute_knowledge_tables: KnowledgeTables) -> bool:
+    def has_solution(self) -> bool:
         # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings
         next_maybe = self.find_maybe()
         if next_maybe is None:  # Check the final solution
-            return self.check_knowledge(brute_knowledge_tables)
+            return self.check_knowledge(self.knowledge_tables)
 
         category, player, card = next_maybe
-        brute_knowledge_tables[category][player][card] = Knowledge.TRUE  # Try true
-        if self.check_knowledge(brute_knowledge_tables):
-            if self.has_solution(brute_knowledge_tables):
-                brute_knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+        self.knowledge_tables[category][player][card] = Knowledge.TRUE  # Try true
+        if self.check_knowledge(self.knowledge_tables):
+            if self.has_solution():
+                self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
                 return True
 
-        brute_knowledge_tables[category][player][card] = Knowledge.FALSE   # Try false
-        if self.check_knowledge(brute_knowledge_tables):
-            if self.has_solution(brute_knowledge_tables):
-                brute_knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+        self.knowledge_tables[category][player][card] = Knowledge.FALSE   # Try false
+        if self.check_knowledge(self.knowledge_tables):
+            if self.has_solution():
+                self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
                 return True
-        brute_knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+        self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
         return False
 
     def check_knowledge(self, test_tables: KnowledgeTables) -> bool:
