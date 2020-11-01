@@ -45,25 +45,20 @@ class GameState:
         self.rumours = []
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
-        category_table = self.knowledge_tables[card.category]
+        self.derive_knowledge(player, card, knowledge)
+        self.basic_brute_force()
 
-        if category_table[player][card] != Knowledge.MAYBE:
-            if category_table[player][card] != knowledge:
-                raise Exception(
-                    f'Contradiction in table {card.category} player {player.name} card {card.name} '
-                    f'Attempt to overwrite {self.knowledge_tables[card.category][player][card]} with {knowledge}'
-                )
-
-        category_table[player][card] = knowledge
+    def derive_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
+        self.write_knowledge_safely(card, knowledge, player)
 
         # Exclusion: Other players cannot have the same card
-        if knowledge == Knowledge.TRUE:           # Exclude other players if a player has a card
+        if knowledge == Knowledge.TRUE:  # Exclude other players if a player has a card
             for other_player in self.players:
                 if other_player != player:
-                    category_table[other_player][card] = Knowledge.FALSE
+                    self.knowledge_tables[card.category][other_player][card] = Knowledge.FALSE
 
         # Max cards: A player cannot have more cards than he has
-        for player in self.players:   # Count known cards
+        for player in self.players:  # Count known cards
             known_cards = 0
             for card in self.cards:
                 if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
@@ -73,6 +68,16 @@ class GameState:
                     if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
 
+    def write_knowledge_safely(self, card, knowledge, player):
+        if self.knowledge_tables[card.category][player][card] != Knowledge.MAYBE:
+            if self.knowledge_tables[card.category][player][card] != knowledge:
+                raise Exception(
+                    f'Contradiction in table {card.category} player {player.name} card {card.name} '
+                    f'Attempt to overwrite {self.knowledge_tables[card.category][player][card]} with {knowledge}'
+                )
+        self.knowledge_tables[card.category][player][card] = knowledge
+
+    def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
         for player in self.players:
             for card in self.cards:
