@@ -1,5 +1,6 @@
 from typing import List, NamedTuple, Tuple, Optional, Dict
 
+import utility
 from knowledge import Knowledge
 from player import Player
 from card import Card
@@ -123,6 +124,54 @@ class GameState:
         self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
         return False
 
+    def smart_has_solution(self) -> bool:
+        unknown_cards = [c for c in self.cards if c not in self.known_cards]
+        available_cards = {}
+        cards_owned = {}
+        for player in self.players:
+            for card in self.cards:
+                if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                    available_cards[player].append(card)
+                elif self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                    cards_owned[player] += 1
+
+        player_hands = {}
+
+        choose_weapon = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
+        for weapon in choose_weapon:
+            unknown_cards = [c for c in unknown_cards if c not in weapon]
+            choose_room = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
+            for room in choose_room:
+                unknown_cards = [c for c in unknown_cards if c not in room]
+                choose_character = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
+                for character in choose_character:
+                    unknown_cards = [c for c in unknown_cards if c not in character]
+                    if self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned,
+                                                self.players[0]):
+                        return True
+        return False
+
+    def _smart_has_solution(self, player_hands: Dict[Player, List[Card]], unknown_cards: List[Card],
+                            available_cards: Dict[Player, List[Card]], cards_owned: Dict[Player, int],
+                            player: Player):
+        player_hand = utility.permutations([c for c in unknown_cards if c in available_cards[player]],
+                                                           player.cardAmount-cards_owned[player])
+        player_index = 0
+        for p in self.players:
+            if player is p:
+                break
+            player_index += 1
+
+        for hand in player_hand:
+            player_hands[player] = hand
+            unknown_cards = [c for c in unknown_cards if c not in hand]
+            if player_index is len(self.players)-1:
+                if self.smart_check_knowledge():
+                    return True
+            elif self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned, self.players[player_index + 1]):
+                return True
+        return False
+
     def check_knowledge(self) -> bool:
         # Checks whether given knowledge tables might comply with given rumours
         # Checks whether maximum number of cards is not exceeded
@@ -152,6 +201,9 @@ class GameState:
                     card_amount += 1
             if card_amount > player.cardAmount:
                 return False
+        return True
+
+    def smart_check_knowledge(self):
         return True
 
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
