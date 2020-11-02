@@ -59,11 +59,8 @@ class GameState:
 
         # Max cards: A player cannot have more cards than he has
         for player in self.players:  # Count known cards
-            known_cards = 0
-            for card in self.cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
-                    known_cards += 1
-            if known_cards == player.cardAmount:
+            card_amount = self.count_cards(player)
+            if card_amount == player.cardAmount:
                 for card in self.cards:
                     if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
@@ -98,7 +95,7 @@ class GameState:
 
     def add_rumour(self, rumour: Rumour) -> None:
         self.rumours.append(rumour)
-        for reply in rumour.replies:    # Set all cards to false if rumour is answered false
+        for reply in rumour.replies:  # Set all cards to false if rumour is answered false
             player, knowledge = reply
             if knowledge == Knowledge.FALSE:
                 self.add_knowledge(player, rumour.weapon, knowledge)
@@ -163,3 +160,18 @@ class GameState:
                 if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
                     return card.category, player, card
         return None
+
+    def count_cards(self, player) -> int:
+        card_count = 0
+        for card in self.cards:
+            if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                card_count += 1
+        return card_count
+
+    def known_cards(self) -> List[Card]:
+        known_cards = []
+        for player in self.players:
+            for card in self.cards:
+                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                    known_cards.append(card)
+        return known_cards
