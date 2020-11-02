@@ -1,20 +1,15 @@
 from unittest import TestCase, skip
 from gamestate import GameState, Rumour
-from gameconfig import load_game_config
 from card import Category, Cards
 from knowledge import Knowledge
-
-
-def init_game_state():
-    test_game_config = load_game_config()
-    return GameState(test_game_config.players, test_game_config.used_cards)
+from test.load_test_watson import load_test_watson
 
 
 class TestGameState(TestCase):
     def setUp(self) -> None:
-        self.empty_game_state = init_game_state()
+        self.empty_game_state = load_test_watson()
 
-        small_game_state = init_game_state()
+        small_game_state = load_test_watson()
         players = small_game_state.players
         small_game_state.knowledge_tables[Category.WEAPON][players[0]][Cards.MES] = Knowledge.TRUE
         small_game_state.knowledge_tables[Category.WEAPON][players[1]][Cards.MES] = Knowledge.FALSE
@@ -31,7 +26,7 @@ class TestGameState(TestCase):
         self.full_game_state = self.create_full_game_state()
 
     def create_full_game_state(self) -> GameState:
-        full_game_state = init_game_state()
+        full_game_state = load_test_watson()
 
         self.murderer = Cards.GROENEWOUD
         self.murder_weapon = Cards.PISTOOL

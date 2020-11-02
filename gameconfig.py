@@ -12,8 +12,8 @@ class GameConfig(NamedTuple):
     used_cards: List[Card]
 
 
-def load_game_config() -> GameConfig:
-    with open("gameconfig.json", 'r') as file:
+def load_game_config(filename: str) -> GameConfig:
+    with open(filename, 'r') as file:
         config = json.load(file)
 
     players_json = config["players"]
