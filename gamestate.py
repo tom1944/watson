@@ -109,24 +109,24 @@ class GameState:
         # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings
         next_maybe = self.find_maybe()
         if next_maybe is None:  # Check the final solution
-            return self.check_knowledge(self.knowledge_tables)
+            return self.check_knowledge()
 
         category, player, card = next_maybe
         self.knowledge_tables[category][player][card] = Knowledge.TRUE  # Try true
-        if self.check_knowledge(self.knowledge_tables):
+        if self.check_knowledge():
             if self.has_solution():
                 self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
                 return True
 
         self.knowledge_tables[category][player][card] = Knowledge.FALSE   # Try false
-        if self.check_knowledge(self.knowledge_tables):
+        if self.check_knowledge():
             if self.has_solution():
                 self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
                 return True
         self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
         return False
 
-    def check_knowledge(self, test_tables: KnowledgeTables) -> bool:
+    def check_knowledge(self) -> bool:
         # Checks whether given knowledge tables might comply with given rumours
         # Checks whether maximum number of cards is not exceeded
 
@@ -136,13 +136,13 @@ class GameState:
                 if knowledge == Knowledge.FALSE:
                     # Replier should not have any of the rumoured cards
                     for rumour_card in rumour_cards:
-                        if test_tables[rumour_card.category][replier][rumour_card] == Knowledge.TRUE:
+                        if self.knowledge_tables[rumour_card.category][replier][rumour_card] == Knowledge.TRUE:
                             return False
                 else:
                     # Replier should have any of the rumoured cards
                     true_or_maybe_found = False
                     for rumour_card in rumour_cards:
-                        if test_tables[rumour_card.category][replier][rumour_card] != Knowledge.FALSE:
+                        if self.knowledge_tables[rumour_card.category][replier][rumour_card] != Knowledge.FALSE:
                             true_or_maybe_found = True
                             break
                     if not true_or_maybe_found:
@@ -151,7 +151,7 @@ class GameState:
         for player in self.players:
             card_amount = 0
             for card in self.cards:
-                if test_tables[card.category][player][card] == Knowledge.TRUE:
+                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
                     card_amount += 1
             if card_amount > player.cardAmount:
                 return False

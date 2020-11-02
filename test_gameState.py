@@ -74,7 +74,7 @@ class TestGameState(TestCase):
             )
         ]
 
-        self.assertTrue(game_state.check_knowledge(game_state.knowledge_tables))
+        self.assertTrue(game_state.check_knowledge())
 
         game_state.rumours.append(
             Rumour(
@@ -88,7 +88,7 @@ class TestGameState(TestCase):
             )
         )
 
-        self.assertFalse(game_state.check_knowledge(game_state.knowledge_tables))
+        self.assertFalse(game_state.check_knowledge())
 
         game_state.rumours[1] = Rumour(
             players[0],
@@ -100,13 +100,13 @@ class TestGameState(TestCase):
             ]
         )
 
-        self.assertFalse(game_state.check_knowledge(game_state.knowledge_tables))
+        self.assertFalse(game_state.check_knowledge())
 
     def test_check_knowledge_card_amount(self):
         game_state = self.full_game_state
         game_state.knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.TRUE
         game_state.knowledge_tables[Category.CHARACTER][game_state.players[1]][Cards.PIMPEL] = Knowledge.FALSE
-        self.assertFalse(game_state.check_knowledge(game_state.knowledge_tables))
+        self.assertFalse(game_state.check_knowledge())
 
     def test_has_solution_trivial(self):
         game_state = self.empty_game_state
