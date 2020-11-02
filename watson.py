@@ -29,7 +29,7 @@ class Rumour(NamedTuple):
         return [self.weapon, self.room, self.suspect]
 
 
-class GameState:
+class Watson:
     def __init__(self, players: List[Player], cards: List[Card]):
         self.players = players
         self.cards = cards

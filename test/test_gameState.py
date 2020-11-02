@@ -1,5 +1,5 @@
 from unittest import TestCase, skip
-from gamestate import GameState, Rumour
+from watson import Watson, Rumour
 from card import Category, Cards
 from knowledge import Knowledge
 from test.load_test_watson import load_test_watson
@@ -25,7 +25,7 @@ class TestGameState(TestCase):
 
         self.full_game_state = self.create_full_game_state()
 
-    def create_full_game_state(self) -> GameState:
+    def create_full_game_state(self) -> Watson:
         full_game_state = load_test_watson()
 
         self.murderer = Cards.GROENEWOUD

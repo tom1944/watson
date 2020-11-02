@@ -1,5 +1,5 @@
 from card import Card, Category
-from gamestate import GameState, Rumour, Player
+from watson import Watson, Rumour, Player
 from knowledge import Knowledge
 from typing import List, Any, Dict, Callable
 
@@ -13,7 +13,7 @@ characterNames = {
                     }
 
 
-def game_state_to_string(game_state: GameState) -> str:
+def game_state_to_string(game_state: Watson) -> str:
     k_table: Dict[Player, Dict[Card, Knowledge]] = {}
 
     for player in game_state.players:
@@ -91,7 +91,7 @@ class Table:
         return sb
 
 
-def get_info(game_state: GameState) -> Rumour:
+def get_info(game_state: Watson) -> Rumour:
     while True:
         try:
             return get_rumour(game_state)
@@ -114,7 +114,7 @@ def get_rumour(game_state):
     return rumour
 
 
-def get_rumour_claim(game_state: GameState) -> Rumour:
+def get_rumour_claim(game_state: Watson) -> Rumour:
     player = get_input_string_from_set('Who is on the turn? ', game_state.players, lambda p: p.name)
     room = get_input_string_from_set('Room? ', [c for c in game_state.cards if c.category == Category.ROOM],
                                      lambda c: c.name)
