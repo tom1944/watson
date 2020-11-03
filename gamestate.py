@@ -155,7 +155,7 @@ class GameState:
                             available_cards: Dict[Player, List[Card]], cards_owned: Dict[Player, int],
                             player: Player):
         player_hand = utility.permutations([c for c in unknown_cards if c in available_cards[player]],
-                                                           player.cardAmount-cards_owned[player])
+                                           player.cardAmount-cards_owned[player])
         player_index = 0
         for p in self.players:
             if player is p:
@@ -166,9 +166,10 @@ class GameState:
             player_hands[player] = hand
             unknown_cards = [c for c in unknown_cards if c not in hand]
             if player_index is len(self.players)-1:
-                if self.smart_check_knowledge():
+                if self.smart_check_knowledge(player_hands):
                     return True
-            elif self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned, self.players[player_index + 1]):
+            elif self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned,
+                                          self.players[player_index + 1]):
                 return True
         return False
 
@@ -203,7 +204,28 @@ class GameState:
                 return False
         return True
 
-    def smart_check_knowledge(self):
+    def smart_check_knowledge(self, player_hands: Dict[Player, List[Card]]):
+        for player in self.players:
+            for card in self.cards:
+                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                    player_hands[player].append(card)
+
+        for rumour in self.rumours:
+            rumour_cards = rumour.get_cards()
+            for replier, knowledge in rumour.replies:
+                if knowledge == Knowledge.FALSE:
+                    # Replier should not have any of the rumoured cards
+                    if not set(rumour_cards).isdisjoint(player_hands[replier]):
+                        return False
+                else:
+                    # Replier should have any of the rumoured cards
+                    if set(rumour_cards).isdisjoint(player_hands[replier]):
+                        return False
+
+        for player in self.players:
+            card_amount = len(player_hands[player])
+            if card_amount > player.cardAmount:
+                return False
         return True
 
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
