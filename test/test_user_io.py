@@ -2,8 +2,9 @@ import unittest
 
 from card import Cards
 from knowledge import Knowledge
-from test.load_test_watson import load_test_watson
+from load_game_state import load_game_state
 from user_io import Table
+from watson import Watson
 
 
 class MyTestCase(unittest.TestCase):
@@ -23,8 +24,9 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(True)
 
     def test_print_game_state(self):
-        gs = load_test_watson()
-        gs.add_knowledge(gs.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+        gs = load_game_state('test/game_config.json')
+        watson = Watson(gs)
+        watson.add_knowledge(gs.players[0], Cards.KNUPPEL, Knowledge.TRUE)
         self.assertTrue(True)
 
 

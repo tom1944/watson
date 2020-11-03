@@ -1,5 +1,6 @@
 from card import Card, Category
-from watson import Watson, Rumour, Player
+from watson import Watson, Player
+from rumour import Rumour
 from knowledge import Knowledge
 from typing import List, Any, Dict, Callable
 

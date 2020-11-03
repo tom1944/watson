@@ -1,32 +1,35 @@
 from unittest import TestCase, skip
-from watson import Watson, Rumour
+
+from load_game_state import load_game_state
+from watson import Watson
+from rumour import Rumour
 from card import Category, Cards
 from knowledge import Knowledge
-from test.load_test_watson import load_test_watson
 
 
 class TestGameState(TestCase):
     def setUp(self) -> None:
-        self.empty_game_state = load_test_watson()
+        self.empty_watson = Watson(load_game_state('test/game_config.json'))
 
-        small_game_state = load_test_watson()
-        players = small_game_state.players
-        small_game_state.knowledge_tables[Category.WEAPON][players[0]][Cards.MES] = Knowledge.TRUE
-        small_game_state.knowledge_tables[Category.WEAPON][players[1]][Cards.MES] = Knowledge.FALSE
-        small_game_state.knowledge_tables[Category.WEAPON][players[2]][Cards.MES] = Knowledge.FALSE
+        small_watson = Watson(load_game_state('test/game_config.json'))
+        players = small_watson.game_state.players
+        small_watson.knowledge_tables[Category.WEAPON][players[0]][Cards.MES] = Knowledge.TRUE
+        small_watson.knowledge_tables[Category.WEAPON][players[1]][Cards.MES] = Knowledge.FALSE
+        small_watson.knowledge_tables[Category.WEAPON][players[2]][Cards.MES] = Knowledge.FALSE
 
-        small_game_state.knowledge_tables[Category.ROOM][players[0]][Cards.BUBBELBAD] = Knowledge.FALSE
-        small_game_state.knowledge_tables[Category.ROOM][players[1]][Cards.BUBBELBAD] = Knowledge.TRUE
-        small_game_state.knowledge_tables[Category.ROOM][players[2]][Cards.BUBBELBAD] = Knowledge.FALSE
+        small_watson.knowledge_tables[Category.ROOM][players[0]][Cards.BUBBELBAD] = Knowledge.FALSE
+        small_watson.knowledge_tables[Category.ROOM][players[1]][Cards.BUBBELBAD] = Knowledge.TRUE
+        small_watson.knowledge_tables[Category.ROOM][players[2]][Cards.BUBBELBAD] = Knowledge.FALSE
 
-        small_game_state.knowledge_tables[Category.CHARACTER][players[2]][Cards.PIMPEL] = Knowledge.FALSE
+        small_watson.knowledge_tables[Category.CHARACTER][players[2]][Cards.PIMPEL] = Knowledge.FALSE
 
-        self.small_game_state = small_game_state
+        self.small_watson = small_watson
 
-        self.full_game_state = self.create_full_game_state()
+        self.full_watson = self.create_full_watson()
 
-    def create_full_game_state(self) -> Watson:
-        full_game_state = load_test_watson()
+    def create_full_watson(self) -> Watson:
+        full_game_state = load_game_state('test/game_config.json')
+        full_watson = Watson(full_game_state)
 
         self.murderer = Cards.GROENEWOUD
         self.murder_weapon = Cards.PISTOOL
@@ -42,18 +45,19 @@ class TestGameState(TestCase):
                                          Cards.ROODHART],
         }
 
-        for card in full_game_state.cards:
+        for card in full_game_state.used_cards:
             for player in full_game_state.players:
-                full_game_state.knowledge_tables[card.category][player][card] = Knowledge.FALSE
+                full_watson.knowledge_tables[card.category][player][card] = Knowledge.FALSE
 
         for player, cards in player_hands.items():
             for card in cards:
-                full_game_state.knowledge_tables[card.category][player][card] = Knowledge.TRUE
+                full_watson.knowledge_tables[card.category][player][card] = Knowledge.TRUE
 
-        return full_game_state
+        return full_watson
 
     def test_check_knowledge(self):
-        game_state = self.small_game_state
+        watson = self.small_watson
+        game_state = watson.game_state
         players = game_state.players
 
         game_state.rumours = [
@@ -69,7 +73,7 @@ class TestGameState(TestCase):
             )
         ]
 
-        self.assertTrue(game_state.check_knowledge())
+        self.assertTrue(watson.check_knowledge())
 
         game_state.rumours.append(
             Rumour(
@@ -83,7 +87,7 @@ class TestGameState(TestCase):
             )
         )
 
-        self.assertFalse(game_state.check_knowledge())
+        self.assertFalse(watson.check_knowledge())
 
         game_state.rumours[1] = Rumour(
             players[0],
@@ -95,20 +99,22 @@ class TestGameState(TestCase):
             ]
         )
 
-        self.assertFalse(game_state.check_knowledge())
+        self.assertFalse(watson.check_knowledge())
 
     def test_check_knowledge_card_amount(self):
-        game_state = self.full_game_state
-        game_state.knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.TRUE
-        game_state.knowledge_tables[Category.CHARACTER][game_state.players[1]][Cards.PIMPEL] = Knowledge.FALSE
-        self.assertFalse(game_state.check_knowledge())
+        watson = self.full_watson
+        game_state = watson.game_state
+        watson.knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.TRUE
+        watson.knowledge_tables[Category.CHARACTER][game_state.players[1]][Cards.PIMPEL] = Knowledge.FALSE
+        self.assertFalse(watson.check_knowledge())
 
     def test_has_solution_trivial(self):
-        game_state = self.empty_game_state
-        self.assertTrue(game_state.has_solution())   # Trivial
+        watson = self.empty_watson
+        self.assertTrue(watson.has_solution())   # Trivial
 
     def test_has_solution_basic(self):
-        game_state = self.empty_game_state
+        watson = self.empty_watson
+        game_state = watson.game_state
         rum1 = Rumour(
             game_state.players[0],
             Cards.KANDELAAR,
@@ -133,11 +139,12 @@ class TestGameState(TestCase):
 
         game_state.rumours = [rum1, rum2]
 
-        self.assertTrue(game_state.has_solution())
+        self.assertTrue(watson.has_solution())
 
     def test_has_solution_false_negative(self):
-        game_state = self.empty_game_state
-        knowledge_tables = game_state.knowledge_tables
+        watson = self.empty_watson
+        game_state = watson.game_state
+        knowledge_tables = watson.knowledge_tables
 
         rum1 = Rumour(
             game_state.players[0],
@@ -152,11 +159,12 @@ class TestGameState(TestCase):
 
         game_state.rumours = [rum1]
         knowledge_tables[Category.ROOM][game_state.players[1]][Cards.BUBBELBAD] = Knowledge.TRUE
-        self.assertFalse(game_state.has_solution())
+        self.assertFalse(watson.has_solution())
 
     def test_has_solution_false_positive(self):
-        game_state = self.empty_game_state
-        knowledge_tables = game_state.knowledge_tables
+        watson = self.empty_watson
+        game_state = watson.game_state
+        knowledge_tables = watson.knowledge_tables
 
         rum1 = Rumour(
             game_state.players[0],
@@ -185,11 +193,11 @@ class TestGameState(TestCase):
         knowledge_tables[Category.WEAPON][game_state.players[0]][Cards.HALTER] = Knowledge.FALSE
         knowledge_tables[Category.ROOM][game_state.players[0]][Cards.HAL] = Knowledge.FALSE
         knowledge_tables[Category.CHARACTER][game_state.players[0]][Cards.PIMPEL] = Knowledge.FALSE
-        self.assertFalse(game_state.has_solution())
+        self.assertFalse(watson.has_solution())
 
     @skip
     def test_has_solution_triplet(self):
-        game_state = self.empty_game_state
+        game_state = self.empty_watson.game_state
         knowledge_tables = game_state.knowledge_tables
 
         rum1 = Rumour(
@@ -234,21 +242,23 @@ class TestGameState(TestCase):
         self.assertFalse(game_state.has_solution())
 
     def test_add_card(self):
-        game_state = self.empty_game_state
-        game_state.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+        watson = self.empty_watson
+        game_state = watson.game_state
+        watson.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
 
         for player in game_state.players:
-            knowledge = game_state.knowledge_tables[Category.WEAPON][player][Cards.KNUPPEL]
+            knowledge = watson.knowledge_tables[Category.WEAPON][player][Cards.KNUPPEL]
             if player == game_state.players[0]:
                 self.assertEqual(knowledge, Knowledge.TRUE)
             else:
                 self.assertEqual(knowledge, Knowledge.FALSE)
 
     def test_add_rumour(self):
-        game_state = self.empty_game_state
+        game_state = self.empty_watson.game_state
+        watson = self.empty_watson
 
-        game_state.add_knowledge(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
-        game_state.add_knowledge(game_state.players[2], Cards.HAL, Knowledge.FALSE)
+        watson.add_knowledge(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
+        watson.add_knowledge(game_state.players[2], Cards.HAL, Knowledge.FALSE)
 
         test_rumour = Rumour(
             game_state.players[1],
@@ -261,8 +271,8 @@ class TestGameState(TestCase):
             ]
         )
 
-        game_state.add_rumour(test_rumour)
+        watson.add_rumour(test_rumour)
         self.assertEqual(
-            game_state.knowledge_tables[Category.CHARACTER][game_state.players[2]][Cards.PIMPEL],
+            watson.knowledge_tables[Category.CHARACTER][game_state.players[2]][Cards.PIMPEL],
             Knowledge.TRUE
         )

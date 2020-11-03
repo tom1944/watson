@@ -1,18 +1,12 @@
 import json
 
+from gamestate import GameState
 from player import Player
 from card import Card, Category, cat_from_string
-from typing import List, NamedTuple
+from typing import List
 
 
-class GameConfig(NamedTuple):
-    players: List[Player]
-    open_cards: List[Card]
-    your_cards: List[Card]
-    used_cards: List[Card]
-
-
-def load_game_config(filename: str) -> GameConfig:
+def load_game_state(filename: str) -> GameState:
     with open(filename, 'r') as file:
         config = json.load(file)
 
@@ -50,7 +44,7 @@ def load_game_config(filename: str) -> GameConfig:
         your_card = find_card_by_name(your_card_json, all_cards)
         your_cards.append(your_card)
 
-    return GameConfig(players, open_cards, your_cards, used_cards)
+    return GameState(players, your_cards, used_cards)
 
 
 def check_if_all_categories_present(all_cards_json) -> None:
