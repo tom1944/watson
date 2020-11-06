@@ -10,7 +10,7 @@ class TestKnowledgeTable(TestCase):
     def setUp(self):
         self.game_state = load_game_state('test/game_config.json')
         self.some_player = self.game_state.players[0]
-        self.knowledge_table = KnowledgeTable(self.game_state)
+        self.knowledge_table = KnowledgeTable(self.game_state.players, self.game_state.used_cards)
 
     def test_new_knowledge_table(self):
         for player in self.game_state.players:

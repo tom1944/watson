@@ -1,21 +1,21 @@
 from typing import Tuple, List, Dict
 
 from card import Category, Card
-from gamestate import GameState
 from knowledge import Knowledge
 from player import Player
 
 
 class KnowledgeTable:
-    def __init__(self, game_state: GameState):
-        self.game_state = game_state
+    def __init__(self, players: List[Player], cards: List[Card]):
+        self.players = players
+        self.cards = cards
         self._knowledge_tables = {}
 
         for category in Category:
             table = {}
-            for player in game_state.players:
+            for player in players:
                 column = {}
-                for card in game_state.used_cards:
+                for card in cards:
                     if card.category == category:
                         column[card] = Knowledge.MAYBE
                 table[player] = column
@@ -49,14 +49,14 @@ class KnowledgeTable:
         self._knowledge_tables[card.category][player][card] = knowledge
 
     def get_current_player_hands(self) -> Tuple[Dict[Player, List[Card]], List[Card], List[Card]]:
-        player_hands = {p: [] for p in self.game_state.players}
+        player_hands = {p: [] for p in self.players}
         murderer_cards = []
         free_cards = []
 
-        for card in self.game_state.used_cards:
+        for card in self.cards:
             all_false = True
 
-            for player in self.game_state.players:
+            for player in self.players:
                 knowledge = self.get_knowledge(player, card)
                 if knowledge == Knowledge.TRUE:
                     player_hands[player].append(card)
