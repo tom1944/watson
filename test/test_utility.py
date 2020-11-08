@@ -2,7 +2,7 @@ import unittest
 import utility
 
 
-class MyTestCase(unittest.TestCase):
+class TestUtility(unittest.TestCase):
     def test_permutations(self):
         perm_gen = utility.permutations([1, 2, 3, 4, 5], 2)
         options = {0: {1, 2},
