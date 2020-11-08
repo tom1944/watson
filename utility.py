@@ -3,7 +3,6 @@ def permutations(list, k):
         yield []
     else:
         n = len(list)
-        # if n == k:
         for i in range(n-k+1):
             l = list[i]
             for perm in permutations(list[i+1:], k-1):

@@ -93,6 +93,7 @@ class Watson:
                 self.add_knowledge(player, rumour.suspect, knowledge)
 
     def has_solution(self) -> bool:
+        return self.smart_has_solution()
         # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings
         next_maybe = self.find_maybe()
         if next_maybe is None:  # Check the final solution
@@ -114,52 +115,49 @@ class Watson:
         return False
 
     def smart_has_solution(self) -> bool:
-        unknown_cards = [c for c in self.game_state.used_cards if c not in self.known_cards]
+        unknown_cards = [c for c in self.game_state.used_cards if c not in self.known_cards()]
         available_cards = {}
         cards_owned = {}
+        player_hands = {}
         for player in self.game_state.players:
+            available_cards[player] = []
+            player_hands[player] = []
+            cards_owned[player] = 0
             for card in self.game_state.used_cards:
                 if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
                     available_cards[player].append(card)
                 elif self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
                     cards_owned[player] += 1
 
-        player_hands = {}
-
-        choose_weapon = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
+        choose_weapon = [c for c in unknown_cards if c.category == Category.WEAPON]
+        choose_room = [c for c in unknown_cards if c.category == Category.ROOM]
+        choose_character = [c for c in unknown_cards if c.category == Category.CHARACTER]
         for weapon in choose_weapon:
-            unknown_cards = [c for c in unknown_cards if c not in weapon]
-            choose_room = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
             for room in choose_room:
-                unknown_cards = [c for c in unknown_cards if c not in room]
-                choose_character = utility.permutations([c for c in unknown_cards if c.category == Category.WEAPON], 1)
                 for character in choose_character:
-                    unknown_cards = [c for c in unknown_cards if c not in character]
-                    if self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned,
-                                                self.game_state.players[0]):
+                    new_unknown_cards = [c for c in unknown_cards if c not in [character, weapon, room]]
+                    if self._smart_has_solution(player_hands, new_unknown_cards, available_cards, cards_owned, 0):
                         return True
         return False
 
     def _smart_has_solution(self, player_hands: Dict[Player, List[Card]], unknown_cards: List[Card],
                             available_cards: Dict[Player, List[Card]], cards_owned: Dict[Player, int],
-                            player: Player):
+                            player_index: int) -> bool:
+        player = self.game_state.players[player_index]
         player_hand = utility.permutations([c for c in unknown_cards if c in available_cards[player]],
                                            player.cardAmount-cards_owned[player])
-        player_index = 0
-        for p in self.game_state.players:
-            if player is p:
-                break
-            player_index += 1
 
         for hand in player_hand:
             player_hands[player] = hand
-            unknown_cards = [c for c in unknown_cards if c not in hand]
-            if player_index is len(self.game_state.players)-1:
-                if self.smart_check_knowledge(player_hands):
+            new_unknown_cards = [c for c in unknown_cards if c not in hand]
+            if self.smart_check_knowledge(player_hands, new_unknown_cards):
+                if player_index == len(self.game_state.players) - 1:
                     return True
-            elif self._smart_has_solution(player_hands, unknown_cards, available_cards, cards_owned,
-                                          self.game_state.players[player_index + 1]):
-                return True
+                elif self._smart_has_solution(player_hands, new_unknown_cards, available_cards, cards_owned,
+                                              player_index + 1):
+                    return True
+                else:
+                    player_hands[self.game_state.players[player_index + 1]] = []
         return False
 
     def check_knowledge(self) -> bool:
@@ -193,28 +191,31 @@ class Watson:
                 return False
         return True
 
-    def smart_check_knowledge(self, player_hands: Dict[Player, List[Card]]):
+    def smart_check_knowledge(self, player_hands: Dict[Player, List[Card]], unknown_cards: List[Card]):
+        already_owned = {}
         for player in self.game_state.players:
+            already_owned[player] = []
             for card in self.game_state.used_cards:
                 if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
-                    player_hands[player].append(card)
+                    already_owned[player].append(card)
+            if len(player_hands[player]+already_owned[player]) > player.cardAmount:
+                return False
 
         for rumour in self.game_state.rumours:
             rumour_cards = rumour.get_cards()
             for replier, knowledge in rumour.replies:
+                possible_no_possession = set(rumour_cards).isdisjoint(player_hands[replier]+already_owned[replier])
                 if knowledge == Knowledge.FALSE:
                     # Replier should not have any of the rumoured cards
-                    if not set(rumour_cards).isdisjoint(player_hands[replier]):
+                    if not possible_no_possession:
                         return False
                 else:
                     # Replier should have any of the rumoured cards
-                    if set(rumour_cards).isdisjoint(player_hands[replier]):
+                    if replier.cardAmount == len(player_hands[replier]+already_owned[replier])\
+                            and possible_no_possession:
                         return False
-
-        for player in self.game_state.players:
-            card_amount = len(player_hands[player])
-            if card_amount > player.cardAmount:
-                return False
+                    if set(rumour_cards).isdisjoint(unknown_cards) and possible_no_possession:
+                        return False
         return True
 
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
