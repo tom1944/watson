@@ -63,9 +63,7 @@ class TestGameState(TestCase):
         game_state.rumours = [
             Rumour(
                 players[0],
-                Cards.MES,
-                Cards.THEATER,
-                Cards.BLAAUWVANDRAET,
+                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
                 [
                     (players[1], Knowledge.FALSE),
                     (players[2], Knowledge.TRUE),
@@ -78,9 +76,7 @@ class TestGameState(TestCase):
         game_state.rumours.append(
             Rumour(
                 players[1],
-                Cards.MES,
-                Cards.THEATER,
-                Cards.BLAAUWVANDRAET,
+                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
                 [
                     (players[0], Knowledge.FALSE),
                 ]
@@ -91,9 +87,7 @@ class TestGameState(TestCase):
 
         game_state.rumours[1] = Rumour(
             players[0],
-            Cards.MES,
-            Cards.BUBBELBAD,
-            Cards.PIMPEL,
+            [Cards.MES, Cards.BUBBELBAD, Cards.PIMPEL],
             [
                 (players[2], Knowledge.TRUE),
             ]
@@ -128,9 +122,7 @@ class TestGameState(TestCase):
         game_state.rumours = [
             Rumour(
                 players[0],
-                Cards.MES,
-                Cards.THEATER,
-                Cards.BLAAUWVANDRAET,
+                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
                 [
                     (players[1], Knowledge.FALSE),
                     (players[2], Knowledge.TRUE),
@@ -142,9 +134,7 @@ class TestGameState(TestCase):
         game_state.rumours.append(
             Rumour(
                 players[1],
-                Cards.MES,
-                Cards.THEATER,
-                Cards.BLAAUWVANDRAET,
+                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
                 [
                     (players[0], Knowledge.FALSE),
                 ]
@@ -161,9 +151,7 @@ class TestGameState(TestCase):
         game_state = watson.game_state
         rum1 = Rumour(
             game_state.players[0],
-            Cards.KANDELAAR,
-            Cards.BUBBELBAD,
-            Cards.DEWIT,
+            [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
                 (game_state.players[1], Knowledge.FALSE),
                 (game_state.players[2], Knowledge.TRUE)
@@ -172,9 +160,7 @@ class TestGameState(TestCase):
 
         rum2 = Rumour(
             game_state.players[1],
-            Cards.HALTER,
-            Cards.HAL,
-            Cards.PIMPEL,
+            [Cards.HALTER, Cards.HAL, Cards.PIMPEL],
             [
                 (game_state.players[0], Knowledge.TRUE),
                 (game_state.players[2], Knowledge.FALSE)
@@ -192,9 +178,7 @@ class TestGameState(TestCase):
 
         rum1 = Rumour(
             game_state.players[0],
-            Cards.KANDELAAR,
-            Cards.BUBBELBAD,
-            Cards.DEWIT,
+            [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
                 (game_state.players[1], Knowledge.FALSE),
                 (game_state.players[2], Knowledge.TRUE)
@@ -212,9 +196,7 @@ class TestGameState(TestCase):
 
         rum1 = Rumour(
             game_state.players[0],
-            Cards.KANDELAAR,
-            Cards.BUBBELBAD,
-            Cards.DEWIT,
+            [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
                 (game_state.players[1], Knowledge.FALSE),
                 (game_state.players[2], Knowledge.TRUE)
@@ -223,9 +205,7 @@ class TestGameState(TestCase):
 
         rum2 = Rumour(
             game_state.players[1],
-            Cards.HALTER,
-            Cards.HAL,
-            Cards.PIMPEL,
+            [Cards.HALTER, Cards.HAL, Cards.PIMPEL],
             [
                 (game_state.players[0], Knowledge.TRUE),
                 (game_state.players[2], Knowledge.FALSE)
@@ -246,9 +226,7 @@ class TestGameState(TestCase):
 
         rum1 = Rumour(
             game_state.players[0],
-            Cards.HALTER,
-            Cards.GASTENVERBLIJF,
-            Cards.DEWIT,
+            [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.DEWIT],
             [
                 (game_state.players[1], Knowledge.TRUE),
                 (game_state.players[2], Knowledge.FALSE)
@@ -257,9 +235,7 @@ class TestGameState(TestCase):
 
         rum2 = Rumour(
             game_state.players[0],
-            Cards.HALTER,
-            Cards.GASTENVERBLIJF,
-            Cards.ROODHART,
+            [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.ROODHART],
             [
                 (game_state.players[1], Knowledge.TRUE),
                 (game_state.players[2], Knowledge.FALSE)
@@ -268,9 +244,7 @@ class TestGameState(TestCase):
 
         rum3 = Rumour(
             game_state.players[0],
-            Cards.HALTER,
-            Cards.GASTENVERBLIJF,
-            Cards.BLAAUWVANDRAET,
+            [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.BLAAUWVANDRAET],
             [
                 (game_state.players[1], Knowledge.TRUE),
                 (game_state.players[2], Knowledge.FALSE)
@@ -307,9 +281,7 @@ class TestGameState(TestCase):
 
         test_rumour = Rumour(
             game_state.players[1],
-            Cards.KANDELAAR,
-            Cards.HAL,
-            Cards.ROODHART,
+            [Cards.KANDELAAR, Cards.HAL, Cards.ROODHART],
             [
                 (game_state.players[0], Knowledge.FALSE),
                 (game_state.players[2], Knowledge.TRUE)

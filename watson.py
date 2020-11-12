@@ -88,9 +88,8 @@ class Watson:
         for reply in rumour.replies:  # Set all cards to false if rumour is answered false
             player, knowledge = reply
             if knowledge == Knowledge.FALSE:
-                self.add_knowledge(player, rumour.weapon, knowledge)
-                self.add_knowledge(player, rumour.room, knowledge)
-                self.add_knowledge(player, rumour.suspect, knowledge)
+                for r_card in rumour.rumour_cards:
+                    self.add_knowledge(player, r_card, Knowledge.FALSE)
 
     def has_solution(self) -> bool:
         return self.smart_has_solution()
@@ -165,7 +164,7 @@ class Watson:
         # Checks whether maximum number of cards is not exceeded
 
         for rumour in self.game_state.rumours:
-            rumour_cards = rumour.get_cards()
+            rumour_cards = rumour.rumour_cards
             for replier, knowledge in rumour.replies:
                 if knowledge == Knowledge.FALSE:
                     # Replier should not have any of the rumoured cards
@@ -202,7 +201,7 @@ class Watson:
                 return False
 
         for rumour in self.game_state.rumours:
-            rumour_cards = rumour.get_cards()
+            rumour_cards = rumour.rumour_cards
             for replier, knowledge in rumour.replies:
                 possible_no_possession = set(rumour_cards).isdisjoint(player_hands[replier]+already_owned[replier])
                 if knowledge == Knowledge.FALSE:
