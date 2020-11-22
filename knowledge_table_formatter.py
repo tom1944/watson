@@ -1,16 +1,18 @@
-import watson
 from card import Category
-from gamestate import GameState
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from table_formatter import TableFormatter
 
 
-class KnowledgeTableFormatter:
-    game_state: GameState
+def knowledge_to_str(knowledge: Knowledge) -> str:
+    return {
+        Knowledge.TRUE: 'v',
+        Knowledge.FALSE: 'x',
+        Knowledge.MAYBE: '.',
+    }[knowledge]
 
-    def __init__(self, game_state: GameState):
-        self.game_state = game_state
+
+class KnowledgeTableFormatter:
 
     def format_knowledge_table(self, knowledge_table: KnowledgeTable):
         lines = []
@@ -19,8 +21,8 @@ class KnowledgeTableFormatter:
         return "\n".join(lines)
 
     def format_category_table(self, category: Category, knowledge_table: KnowledgeTable):
-        players = self.game_state.players
-        category_cards = [card for card in self.game_state.used_cards if card.category == category]
+        players = knowledge_table.players
+        category_cards = [card for card in knowledge_table.cards if card.category == category]
         category_cards.sort(key=lambda card: card.name)
 
         table = TableFormatter(len(category_cards) + 1, len(players) + 1)
@@ -35,14 +37,7 @@ class KnowledgeTableFormatter:
             for player_i in range(len(players)):
                 card = category_cards[card_i]
                 player = players[player_i]
-                s = self.knowledge_to_str(knowledge_table[card.category][player][card])
+                s = knowledge_to_str(knowledge_table.get_knowledge(player, card))
                 table.set(card_i + 1, player_i + 1, s)
         return table.to_string()
-
-    def knowledge_to_str(self, knowledge: Knowledge) -> str:
-        return {
-            Knowledge.TRUE: 'v',
-            Knowledge.FALSE: 'x',
-            Knowledge.MAYBE: '.',
-        }[knowledge]
 
