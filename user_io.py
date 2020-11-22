@@ -111,7 +111,7 @@ def print_category_table(category_cards: List[Card], game_state: GameState, k_ta
     players = game_state.players
     category_cards.sort(key=lambda card: card.name)
 
-    table = TableFormatter(len(players) + 1, len(category_cards) + 1)
+    table = TableFormatter(len(category_cards) + 1, len(players) + 1)
     # Set the player names in the table
     for p in range(len(players)):
         table.set(p + 1, 0, players[p].name)

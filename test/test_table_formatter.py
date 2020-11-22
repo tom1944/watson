@@ -14,7 +14,7 @@ class TestTableFormatter(unittest.TestCase):
         t = TableFormatter(4, 4)
         for _row in range(4):
             for _col in range(4):
-                t.set(_col, _row, test_table[_row][_col])
+                t.set(_row, _col, test_table[_row][_col])
 
         expected = '\n'.join([
             "         Tom    Menno  Michiel ",
