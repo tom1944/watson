@@ -36,7 +36,6 @@ class Watson:
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.derive_knowledge(player, card, knowledge)
-        self.basic_brute_force()
 
     def derive_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.write_knowledge_safely(card, knowledge, player)
