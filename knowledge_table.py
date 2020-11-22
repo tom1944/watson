@@ -34,9 +34,9 @@ class KnowledgeTable:
         if not isinstance(value, Knowledge):
             raise TypeError(f'Type of value {value} must be Knowledge')
 
-        self.set_item(card, player, value)
+        self.set_item(player, card, value)
 
-    def set_item(self, card: Card, player: Player, knowledge: Knowledge):
+    def set_item(self, player: Player, card: Card, knowledge: Knowledge):
         if self._knowledge_tables[card.category][player][card] != Knowledge.MAYBE:
             if self._knowledge_tables[card.category][player][card] != knowledge:
                 raise ValueError(

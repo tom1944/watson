@@ -3,35 +3,17 @@ from typing import List, Tuple, Optional, Dict
 import utility
 from gamestate import GameState
 from knowledge import Knowledge
+from knowledge_table import KnowledgeTable
 from player import Player
 from card import Card
 from card import Category
 from rumour import Rumour
 
-KnowledgeTables = Dict[
-    Category,
-    Dict[
-        Player,
-        Dict[
-            Card,
-            Knowledge]
-    ]
-]    # typedef
-
 
 class Watson:
     def __init__(self, game_state: GameState):
         self.game_state = game_state
-        self.knowledge_tables = {}
-        for category in Category:
-            table = {}
-            for player in game_state.players:
-                column = {}
-                for card in game_state.used_cards:
-                    if card.category == category:
-                        column[card] = Knowledge.MAYBE
-                table[player] = column
-            self.knowledge_tables[category] = table
+        self.knowledge_tables = KnowledgeTable(game_state.players, game_state.used_cards)
         self.game_state.rumours = []
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
@@ -51,36 +33,36 @@ class Watson:
             card_amount = self.count_cards(player)
             if card_amount == player.cardAmount:
                 for card in self.game_state.used_cards:
-                    if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                    if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
 
     def write_knowledge_safely(self, card, knowledge, player):
-        if self.knowledge_tables[card.category][player][card] != Knowledge.MAYBE:
-            if self.knowledge_tables[card.category][player][card] != knowledge:
+        if self.knowledge_tables.get_knowledge(player, card) != Knowledge.MAYBE:
+            if self.knowledge_tables.get_knowledge(player, card) != knowledge:
                 raise Exception(
                     f'Contradiction in table {card.category} player {player.name} card {card.name} '
-                    f'Attempt to overwrite {self.knowledge_tables[card.category][player][card]} with {knowledge}'
+                    f'Attempt to overwrite {self.knowledge_tables.get_knowledge(player, card)} with {knowledge}'
                 )
-        self.knowledge_tables[card.category][player][card] = knowledge
+        self.knowledge_tables.set_item(player, card, knowledge)
 
     def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
         for player in self.game_state.players:
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
 
-                    self.knowledge_tables[card.category][player][card] = Knowledge.TRUE  # Try to fill in true
+                    self.knowledge_tables.set_item(player, card, Knowledge.TRUE)  # Try to fill in true
                     if not self.has_solution():
-                        self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
+                        self.knowledge_tables.set_item_without_check(player, card, Knowledge.MAYBE)
                         self.add_knowledge(player, card, Knowledge.FALSE)
                         continue
 
-                    self.knowledge_tables[card.category][player][card] = Knowledge.FALSE  # Try to fill in false
+                    self.knowledge_tables.set_item(player, card, Knowledge.FALSE)  # Try to fill in false
                     if not self.has_solution():
-                        self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
+                        self.knowledge_tables.set_item_without_check(player, card, Knowledge.MAYBE)
                         self.add_knowledge(player, card, Knowledge.TRUE)
                     else:
-                        self.knowledge_tables[card.category][player][card] = Knowledge.MAYBE
+                        self.knowledge_tables.set_item_without_check(player, card, Knowledge.MAYBE)
 
     def add_rumour(self, rumour: Rumour) -> None:
         self.game_state.rumours.append(rumour)
@@ -98,18 +80,18 @@ class Watson:
             return self.check_knowledge()
 
         category, player, card = next_maybe
-        self.knowledge_tables[category][player][card] = Knowledge.TRUE  # Try true
+        self.knowledge_tables.set_item(player, card, Knowledge.TRUE)  # Try true
         if self.check_knowledge():
             if self.has_solution():
-                self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+                self.knowledge_tables.set_item(player, card, Knowledge.MAYBE)  # Reset
                 return True
 
-        self.knowledge_tables[category][player][card] = Knowledge.FALSE   # Try false
+        self.knowledge_tables.set_item(player, card, Knowledge.FALSE)  # Try false
         if self.check_knowledge():
             if self.has_solution():
-                self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+                self.knowledge_tables.set_item(player, card, Knowledge.MAYBE)  # Reset
                 return True
-        self.knowledge_tables[category][player][card] = Knowledge.MAYBE  # Reset
+        self.knowledge_tables.set_item(player, card, Knowledge.MAYBE)  # Reset
         return False
 
     def smart_has_solution(self) -> bool:
@@ -122,9 +104,9 @@ class Watson:
             player_hands[player] = []
             cards_owned[player] = 0
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                     available_cards[player].append(card)
-                elif self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                elif self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     cards_owned[player] += 1
 
         choose_weapon = [c for c in unknown_cards if c.category == Category.WEAPON]
@@ -168,13 +150,13 @@ class Watson:
                 if knowledge == Knowledge.FALSE:
                     # Replier should not have any of the rumoured cards
                     for rumour_card in rumour_cards:
-                        if self.knowledge_tables[rumour_card.category][replier][rumour_card] == Knowledge.TRUE:
+                        if self.knowledge_tables.get_knowledge(replier, rumour_card) == Knowledge.TRUE:
                             return False
                 else:
                     # Replier should have any of the rumoured cards
                     true_or_maybe_found = False
                     for rumour_card in rumour_cards:
-                        if self.knowledge_tables[rumour_card.category][replier][rumour_card] != Knowledge.FALSE:
+                        if self.knowledge_tables.get_knowledge(replier, rumour_card) != Knowledge.FALSE:
                             true_or_maybe_found = True
                             break
                     if not true_or_maybe_found:
@@ -183,7 +165,7 @@ class Watson:
         for player in self.game_state.players:
             card_amount = 0
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     card_amount += 1
             if card_amount > player.cardAmount:
                 return False
@@ -194,7 +176,7 @@ class Watson:
         for player in self.game_state.players:
             already_owned[player] = []
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     already_owned[player].append(card)
             if len(player_hands[player]+already_owned[player]) > player.cardAmount:
                 return False
@@ -219,14 +201,14 @@ class Watson:
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
         for player in self.game_state.players:
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.MAYBE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                     return card.category, player, card
         return None
 
     def count_cards(self, player) -> int:
         card_count = 0
         for card in self.game_state.used_cards:
-            if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+            if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                 card_count += 1
         return card_count
 
@@ -234,6 +216,6 @@ class Watson:
         known_cards = []
         for player in self.game_state.players:
             for card in self.game_state.used_cards:
-                if self.knowledge_tables[card.category][player][card] == Knowledge.TRUE:
+                if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     known_cards.append(card)
         return known_cards
