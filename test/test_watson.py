@@ -278,8 +278,8 @@ class TestWatson(TestCase):
         game_state = self.empty_watson.game_state
         watson = self.empty_watson
 
-        watson.write_knowledge_safely(Cards.KANDELAAR, Knowledge.FALSE, game_state.players[2])
-        watson.write_knowledge_safely(Cards.HAL, Knowledge.FALSE, game_state.players[2])
+        watson.knowledge_tables.set_item(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
+        watson.knowledge_tables.set_item(game_state.players[2], Cards.HAL, Knowledge.FALSE)
 
         test_rumour = Rumour(
             game_state.players[1],

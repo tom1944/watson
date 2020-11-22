@@ -20,13 +20,13 @@ class Watson:
         self.derive_knowledge(player, card, knowledge)
 
     def derive_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
-        self.write_knowledge_safely(card, knowledge, player)
+        self.knowledge_tables.set_item(player, card, knowledge)
 
         # Exclusion: Other players cannot have the same card
         if knowledge == Knowledge.TRUE:  # Exclude other players if a player has a card
             for other_player in self.game_state.players:
                 if other_player != player:
-                    self.write_knowledge_safely(card, Knowledge.FALSE, other_player)
+                    self.knowledge_tables.set_item(other_player, card, Knowledge.FALSE)
 
         # Max cards: A player cannot have more cards than he has
         for player in self.game_state.players:  # Count known cards
@@ -35,15 +35,6 @@ class Watson:
                 for card in self.game_state.used_cards:
                     if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
-
-    def write_knowledge_safely(self, card, knowledge, player):
-        if self.knowledge_tables.get_knowledge(player, card) != Knowledge.MAYBE:
-            if self.knowledge_tables.get_knowledge(player, card) != knowledge:
-                raise Exception(
-                    f'Contradiction in table {card.category} player {player.name} card {card.name} '
-                    f'Attempt to overwrite {self.knowledge_tables.get_knowledge(player, card)} with {knowledge}'
-                )
-        self.knowledge_tables.set_item(player, card, knowledge)
 
     def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
