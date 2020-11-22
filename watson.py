@@ -44,7 +44,7 @@ class Watson:
         if knowledge == Knowledge.TRUE:  # Exclude other players if a player has a card
             for other_player in self.game_state.players:
                 if other_player != player:
-                    self.knowledge_tables[card.category][other_player][card] = Knowledge.FALSE
+                    self.write_knowledge_safely(card, Knowledge.FALSE, other_player)
 
         # Max cards: A player cannot have more cards than he has
         for player in self.game_state.players:  # Count known cards

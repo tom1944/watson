@@ -1,12 +1,10 @@
 from cmd import Cmd
 
 from card import Card, Category
-from gamestate import GameState
 from rumour import Rumour
-from table_formatter import TableFormatter
 from watson import Player, Watson
 from knowledge import Knowledge
-from typing import List, Dict, Optional, Tuple
+from typing import List, Optional, Tuple
 
 
 class WatsonShell(Cmd):
@@ -89,51 +87,6 @@ class WatsonShell(Cmd):
                 print("Reply should be y or n")
                 continue
             replies.append((player, knowledge))
-
-
-def knowledge_table_to_string(watson: Watson) -> str:
-    k_table: Dict[Player, Dict[Card, Knowledge]] = {}
-
-    for player in watson.game_state.players:
-        column: Dict[Card, Knowledge] = {}
-        for card in watson.game_state.used_cards:
-            column[card] = watson.knowledge_tables[card.category][player][card]
-        k_table[player] = column
-
-    lines = []
-    for category in Category:
-        cat_cards = [card for card in watson.game_state.cards if card.category == category]
-        lines.append(print_category_table(cat_cards, watson.game_state, k_table))
-    return "\n".join(lines)
-
-
-def print_category_table(category_cards: List[Card], game_state: GameState, k_table):
-    players = game_state.players
-    category_cards.sort(key=lambda card: card.name)
-
-    table = TableFormatter(len(category_cards) + 1, len(players) + 1)
-    # Set the player names in the table
-    for p in range(len(players)):
-        table.set(p + 1, 0, players[p].name)
-    # Set the card names in the table
-    for c in range(len(category_cards)):
-        table.set(0, c + 1, category_cards[c].name)
-    # fill the table
-    for card_i in range(len(category_cards)):
-        for player_i in range(len(players)):
-            card = category_cards[card_i]
-            player = players[player_i]
-            s = knowledge_to_str(k_table[player][card])
-            table.set(player_i + 1, card_i + 1, s)
-    return table.to_string()
-
-
-def knowledge_to_str(knowledge: Knowledge) -> str:
-    return {
-        Knowledge.TRUE: 'v',
-        Knowledge.FALSE: 'x',
-        Knowledge.MAYBE: '.',
-    }[knowledge]
 
 
 def match_player(start_of_player_name: str, players: List[Player]) -> Optional[Player]:
