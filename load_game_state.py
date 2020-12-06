@@ -44,7 +44,7 @@ def load_game_state(filename: str) -> GameState:
         your_card = find_card_by_name(your_card_json, all_cards)
         your_cards.append(your_card)
 
-    return GameState(players, your_cards, used_cards)
+    return GameState(players, used_cards, your_cards)
 
 
 def check_if_all_categories_present(all_cards_json) -> None:

@@ -10,11 +10,11 @@ class TestKnowledgeTable(TestCase):
     def setUp(self):
         self.game_state = load_game_state('test/game_config.json')
         self.some_player = self.game_state.players[0]
-        self.knowledge_table = KnowledgeTable(self.game_state.players, self.game_state.used_cards)
+        self.knowledge_table = KnowledgeTable(self.game_state.players, self.game_state.cards)
 
     def test_new_knowledge_table(self):
         for player in self.game_state.players:
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 self.assertEqual(self.knowledge_table[player, card], Knowledge.MAYBE)
                 self.assertEqual(self.knowledge_table.get_knowledge(player, card), Knowledge.MAYBE)
 
@@ -36,7 +36,7 @@ class TestKnowledgeTable(TestCase):
 
     def test_invalid_get(self):
         player = self.game_state.players[0]
-        card = self.game_state.used_cards[0]
+        card = self.game_state.cards[0]
 
         with self.assertRaises(TypeError):
             self.knowledge_table[card, player] = Knowledge.TRUE

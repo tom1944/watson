@@ -13,7 +13,7 @@ from rumour import Rumour
 class Watson:
     def __init__(self, game_state: GameState):
         self.game_state = game_state
-        self.knowledge_tables = KnowledgeTable(game_state.players, game_state.used_cards)
+        self.knowledge_tables = KnowledgeTable(game_state.players, game_state.cards)
         self.game_state.rumours = []
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
@@ -32,14 +32,14 @@ class Watson:
         for player in self.game_state.players:  # Count known cards
             card_amount = self.count_cards(player)
             if card_amount == player.cardAmount:
-                for card in self.game_state.used_cards:
+                for card in self.game_state.cards:
                     if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
 
     def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
         for player in self.game_state.players:
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
 
                     self.knowledge_tables.set_item(player, card, Knowledge.TRUE)  # Try to fill in true
@@ -86,7 +86,7 @@ class Watson:
         return False
 
     def smart_has_solution(self) -> bool:
-        unknown_cards = [c for c in self.game_state.used_cards if c not in self.known_cards()]
+        unknown_cards = [c for c in self.game_state.cards if c not in self.known_cards()]
         available_cards = {}
         cards_owned = {}
         player_hands = {}
@@ -94,7 +94,7 @@ class Watson:
             available_cards[player] = []
             player_hands[player] = []
             cards_owned[player] = 0
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                     available_cards[player].append(card)
                 elif self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
@@ -155,7 +155,7 @@ class Watson:
 
         for player in self.game_state.players:
             card_amount = 0
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     card_amount += 1
             if card_amount > player.cardAmount:
@@ -166,7 +166,7 @@ class Watson:
         already_owned = {}
         for player in self.game_state.players:
             already_owned[player] = []
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     already_owned[player].append(card)
             if len(player_hands[player]+already_owned[player]) > player.cardAmount:
@@ -191,14 +191,14 @@ class Watson:
 
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
         for player in self.game_state.players:
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.MAYBE:
                     return card.category, player, card
         return None
 
     def count_cards(self, player) -> int:
         card_count = 0
-        for card in self.game_state.used_cards:
+        for card in self.game_state.cards:
             if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                 card_count += 1
         return card_count
@@ -206,7 +206,7 @@ class Watson:
     def known_cards(self) -> List[Card]:
         known_cards = []
         for player in self.game_state.players:
-            for card in self.game_state.used_cards:
+            for card in self.game_state.cards:
                 if self.knowledge_tables.get_knowledge(player, card) == Knowledge.TRUE:
                     known_cards.append(card)
         return known_cards

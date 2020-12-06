@@ -11,7 +11,7 @@ from watson import Watson
 class TestKnowledgeTable(TestCase):
     def test_format_knowledge_table(self):
         watson = Watson(load_game_state('test/game_config.json'))
-        knowledge_table = KnowledgeTable(watson.game_state.players, watson.game_state.used_cards)
+        knowledge_table = KnowledgeTable(watson.game_state.players, watson.game_state.cards)
         knowledge_table.set_item(knowledge_table.players[0], Cards.EETKAMER, Knowledge.FALSE)
         knowledge_table.set_item(knowledge_table.players[2], Cards.ROODHART, Knowledge.TRUE)
         printer = KnowledgeTableFormatter()

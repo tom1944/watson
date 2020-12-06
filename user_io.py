@@ -24,7 +24,7 @@ class WatsonShell(Cmd):
 
         owner_name, card_name = args
 
-        card = match_card(card_name, self.watson.game_state.used_cards)
+        card = match_card(card_name, self.watson.game_state.cards)
         owner = match_player(owner_name, self.watson.game_state.players)
 
         if not card or not owner:
@@ -46,7 +46,7 @@ class WatsonShell(Cmd):
 
         claimer_name = args[0]
         card_names = args[1:]
-        rumour_cards = [match_card(card_name, self.watson.game_state.used_cards) for card_name in card_names]
+        rumour_cards = [match_card(card_name, self.watson.game_state.cards) for card_name in card_names]
         claimer = match_player(claimer_name, self.watson.game_state.players)
 
         if not all(rumour_cards) or not claimer:

@@ -45,7 +45,7 @@ class TestWatson(TestCase):
                                          Cards.ROODHART],
         }
 
-        for card in full_game_state.used_cards:
+        for card in full_game_state.cards:
             for player in full_game_state.players:
                 full_watson.knowledge_tables.set_item(player, card, Knowledge.FALSE)
 
@@ -108,7 +108,7 @@ class TestWatson(TestCase):
         player_hands = {}
         for player in game_state.players:
             player_hands[player] = []
-        unknown_cards = game_state.used_cards
+        unknown_cards = game_state.cards
         self.assertTrue(watson.smart_check_knowledge(player_hands, unknown_cards))
 
         watson = self.small_watson
@@ -117,7 +117,7 @@ class TestWatson(TestCase):
         player_hands = {}
         for player in players:
             player_hands[player] = []
-        unknown_cards = game_state.used_cards
+        unknown_cards = game_state.cards
 
         game_state.rumours = [
             Rumour(
