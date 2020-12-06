@@ -14,12 +14,12 @@ class TestUserIO(TestCase):
         watson = Watson(load_game_state('test/game_config.json'))
         shell = WatsonShell(watson)
         shell.onecmd("card Tom Roodhart")
-        self.assertEqual(watson.knowledge_tables.get_knowledge(watson.game_state.players[0], Cards.ROODHART),
+        self.assertEqual(watson.knowledge_tables.get(watson.game_state.players[0], Cards.ROODHART),
                          Knowledge.TRUE)
         for i in range(len(watson.game_state.players)):
             if i > 0:
                 self.assertEqual(
-                    watson.knowledge_tables.get_knowledge(watson.game_state.players[i], Cards.ROODHART),
+                    watson.knowledge_tables.get(watson.game_state.players[i], Cards.ROODHART),
                     Knowledge.FALSE)
 
     reply_string1 = "Tom n"

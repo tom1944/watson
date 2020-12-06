@@ -37,7 +37,7 @@ class KnowledgeTableFormatter:
             for player_i in range(len(players)):
                 card = category_cards[card_i]
                 player = players[player_i]
-                s = knowledge_to_str(knowledge_table.get_knowledge(player, card))
+                s = knowledge_to_str(knowledge_table.get(player, card))
                 table.set(card_i + 1, player_i + 1, s)
         return table.to_string()
 
