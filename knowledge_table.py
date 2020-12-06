@@ -21,20 +21,8 @@ class KnowledgeTable:
                 table[player] = column
             self._knowledge_tables[category] = table
 
-    def __getitem__(self, key) -> Knowledge:
-        player, card = read_key(key)
-        return self.get_knowledge(player, card)
-
     def get_knowledge(self, player: Player, card: Card) -> Knowledge:
         return self._knowledge_tables[card.category][player][card]
-
-    def __setitem__(self, key, value):
-        player, card = read_key(key)
-
-        if not isinstance(value, Knowledge):
-            raise TypeError(f'Type of value {value} must be Knowledge')
-
-        self.set_item(player, card, value)
 
     def set_item(self, player: Player, card: Card, knowledge: Knowledge):
         if self._knowledge_tables[card.category][player][card] != Knowledge.MAYBE:
@@ -71,14 +59,3 @@ class KnowledgeTable:
                 murderer_cards.append(card)
 
         return player_hands, murderer_cards, free_cards
-
-
-def read_key(key) -> Tuple[Player, Card]:
-    if not isinstance(key, tuple) or len(key) != 2:
-        raise TypeError(f'Type of key {key} must be a tuple of Player and Card')
-
-    player, card = key
-    if not isinstance(player, Player) or not isinstance(card, Card):
-        raise TypeError(f'Type of key {key} must be a tuple of Player and Card')
-
-    return player, card
