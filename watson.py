@@ -1,6 +1,6 @@
+from itertools import combinations
 from typing import List, Tuple, Optional, Dict
 
-import utility
 from gamestate import GameState
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
@@ -115,11 +115,11 @@ class Watson:
                             available_cards: Dict[Player, List[Card]], cards_owned: Dict[Player, int],
                             player_index: int) -> bool:
         player = self.game_state.players[player_index]
-        player_hand = utility.permutations([c for c in unknown_cards if c in available_cards[player]],
-                                           player.cardAmount-cards_owned[player])
+        player_hand = combinations([c for c in unknown_cards if c in available_cards[player]],
+                                   player.cardAmount-cards_owned[player])
 
         for hand in player_hand:
-            player_hands[player] = hand
+            player_hands[player] = list(hand)
             new_unknown_cards = [c for c in unknown_cards if c not in hand]
             if self.smart_check_knowledge(player_hands, new_unknown_cards):
                 if player_index == len(self.game_state.players) - 1:
