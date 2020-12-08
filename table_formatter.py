@@ -10,10 +10,6 @@ class TableFormatter:
     def set(self, row: int, col: int, s: str):
         self._t[row][col] = s
 
-    def transpose(self):
-        t2 = zip(*self._t)
-        self._t = list(map(list, t2))
-
     def to_string(self) -> str:
         first_col_length = max(len(self.get(row, 0)) for row in range(self.rows))
         other_col_length = max(len(self.get(row, col)) for col in range(1, self.cols) for row in range(self.rows))
