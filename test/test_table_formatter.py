@@ -17,11 +17,10 @@ class TestTableFormatter(unittest.TestCase):
                 t.set(_row, _col, test_table[_row][_col])
 
         expected = '\n'.join([
-            "         Tom    Menno  Michiel ",
-            "Halter                         ",
-            "   Mes    x       x       v    ",
-            "  Bijl    x                    ",
-            "",
+            "         Tom    Menno  Michiel",
+            "Halter                        ",
+            "   Mes    x       x       v   ",
+            "  Bijl    x                   ",
         ])
 
         self.assertEqual(t.to_string(), expected)

@@ -18,7 +18,7 @@ class KnowledgeTableFormatter:
         lines = []
         for category in Category:
             lines.append(self.format_category_table(category, knowledge_table))
-        return "\n".join(lines)
+        return "\n\n".join(lines)
 
     def format_category_table(self, category: Category, knowledge_table: KnowledgeTable):
         players = knowledge_table.players

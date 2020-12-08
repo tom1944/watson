@@ -14,14 +14,16 @@ class TableFormatter:
         first_col_length = max(len(self.get(row, 0)) for row in range(self.rows))
         other_col_length = max(len(self.get(row, col)) for col in range(1, self.cols) for row in range(self.rows))
 
-        sb = ''
+        row_strings = []
         for row in range(self.rows):
+            row_cells = []
             for col in range(self.cols):
                 if col == 0:
                     s = ('{:>' + str(first_col_length) + '}').format(self.get(row, col)[:first_col_length])
                 else:
                     s = ('{:^' + str(other_col_length) + '}').format(self.get(row, col)[:other_col_length])
-                sb += s + ' '
-            sb += '\n'
+                row_cells.append(s)
+            row_string = ' '.join(row_cells)
+            row_strings.append(row_string)
 
-        return sb
+        return '\n'.join(row_strings)
