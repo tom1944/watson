@@ -14,7 +14,6 @@ class Watson:
     def __init__(self, game_state: GameState):
         self.game_state = game_state
         self.knowledge_tables = KnowledgeTable(game_state.players, game_state.cards)
-        self.game_state.rumours = []
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.derive_knowledge(player, card, knowledge)
