@@ -9,9 +9,9 @@ from knowledge import Knowledge
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
-        self.empty_watson = Watson(load_game_state('test/game_config.json'))
+        self.empty_watson = Watson(load_game_state('test/fixture/game_config.json'))
 
-        small_watson = Watson(load_game_state('test/game_config.json'))
+        small_watson = Watson(load_game_state('test/fixture/game_config.json'))
         players = small_watson.game_state.players
         small_watson.knowledge_tables.set(players[0], Cards.MES, Knowledge.TRUE)
         small_watson.knowledge_tables.set(players[1], Cards.MES, Knowledge.FALSE)
@@ -28,7 +28,7 @@ class TestWatson(TestCase):
         self.full_watson = self.create_full_watson()
 
     def create_full_watson(self) -> Watson:
-        full_game_state = load_game_state('test/game_config.json')
+        full_game_state = load_game_state('test/fixture/game_config.json')
         full_watson = Watson(full_game_state)
 
         self.murderer = Cards.GROENEWOUD

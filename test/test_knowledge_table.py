@@ -8,7 +8,7 @@ from load_game_state import load_game_state
 
 class TestKnowledgeTable(TestCase):
     def setUp(self):
-        self.game_state = load_game_state('test/game_config.json')
+        self.game_state = load_game_state('test/fixture/game_config.json')
         self.some_player = self.game_state.players[0]
         self.knowledge_table = KnowledgeTable(self.game_state.players, self.game_state.cards)
 

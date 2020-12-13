@@ -11,7 +11,7 @@ from user_io import WatsonShell
 
 class TestUserIO(TestCase):
     def test_do_card(self):
-        watson = Watson(load_game_state('test/game_config.json'))
+        watson = Watson(load_game_state('test/fixture/game_config.json'))
         shell = WatsonShell(watson)
         shell.onecmd("card Tom Roodhart")
         self.assertEqual(watson.knowledge_tables.get(watson.game_state.players[0], Cards.ROODHART),
@@ -28,7 +28,7 @@ class TestUserIO(TestCase):
 
     @patch('builtins.input', side_effect=[reply_string1, reply_string2, end_string])
     def test_do_rumour(self, mock_inputs):
-        watson = Watson(load_game_state('test/game_config.json'))
+        watson = Watson(load_game_state('test/fixture/game_config.json'))
         shell = WatsonShell(watson)
         shell.onecmd("r Menno rood bijl eetkamer")
         rumour = watson.game_state.rumours[0]
