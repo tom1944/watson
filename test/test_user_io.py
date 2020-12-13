@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 import user_io
-from card import Cards
+from test.fixture.context import Cards
 from knowledge import Knowledge
 from load_game_state import load_game_state
 from watson import Watson

@@ -3,7 +3,7 @@ from unittest import TestCase, skip
 from load_game_state import load_game_state
 from watson import Watson
 from rumour import Rumour
-from card import Cards
+from test.fixture.context import Cards
 from knowledge import Knowledge
 
 

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from card import Cards
+from test.fixture.context import Cards
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from load_game_state import load_game_state

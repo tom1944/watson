@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from card import Cards
+from test.fixture.context import *
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from knowledge_table_formatter import KnowledgeTableFormatter
