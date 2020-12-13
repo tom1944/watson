@@ -15,23 +15,35 @@
     }
   ],
 
+  "cards": {
+    "Weapon": ["Mes", "Kandelaar", "Pistool", "Vergif", "Troffee", "Touw", "Knuppel", "Bijl", "Halter"],
+    "Room": ["Hal", "Eetkamer", "Keuken", "Terras", "Werkkamer", "Theater", "Zitkamer", "Bubbelbad", "Gastenverblijf"],
+    "Character": ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
+  },
+
   "open_cards": [
     "Troffee",
     "Terras",
     "Van Geelen"
   ],
 
-  "your_cards": [
-    "Roodhart",
-    "Groenewoud",
-    "Keuken",
-    "Theater",
-    "Knuppel"
-  ],
+  "cards_seen": {
+    "Tom": [
+      "Roodhart",
+      "Groenewoud",
+      "Keuken",
+      "Theater",
+      "Knuppel"
+    ],
+    "Menno": [],
+    "Michiel": []
+  },
 
-  "all_cards": {
-    "Weapon": ["Mes", "Kandelaar", "Pistool", "Vergif", "Troffee", "Touw", "Knuppel", "Bijl", "Halter"],
-    "Room": ["Hal", "Eetkamer", "Keuken", "Terras", "Werkkamer", "Theater", "Zitkamer", "Bubbelbad", "Gastenverblijf"],
-    "Character": ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
-  }
+  "rumours_made": [
+    {
+      "cards": ["Mes", "Hal", "Pimpel"],
+      "replied_yes": ["Tom"],
+      "replied_no": ["Michiel"]
+    }
+  ]
 }
