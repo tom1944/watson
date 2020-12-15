@@ -12,8 +12,7 @@ def load_game_state(filename: str) -> GameState:
 
     players_json = config["players"]
     open_cards_json = config["open_cards"]
-    your_cards_json = config["your_cards"]
-    all_cards_json = config["all_cards"]
+    all_cards_json = config["cards"]
 
     check_if_all_categories_present(all_cards_json)
 
@@ -39,12 +38,7 @@ def load_game_state(filename: str) -> GameState:
 
     used_cards = [c for c in all_cards if c not in open_cards]
 
-    your_cards = []
-    for your_card_json in your_cards_json:
-        your_card = find_card_by_name(your_card_json, all_cards)
-        your_cards.append(your_card)
-
-    return GameState(players, used_cards, your_cards)
+    return GameState(players, used_cards)
 
 
 def check_if_all_categories_present(all_cards_json) -> None:
