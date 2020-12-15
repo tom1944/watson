@@ -27,3 +27,6 @@ class Session:
 
     def add_rumour(self, rumour: Rumour):
         self.rumours.append(rumour)
+
+    def __eq__(self, other):
+        return self.rumours == other.rumours and self.cards_seen == other.cards_seen
