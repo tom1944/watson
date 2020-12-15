@@ -41,6 +41,7 @@
 
   "rumours_made": [
     {
+      "claimer": ["Menno"],
       "cards": ["Mes", "Hal", "Pimpel"],
       "replied_yes": ["Tom"],
       "replied_no": ["Michiel"]
