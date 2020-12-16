@@ -13,9 +13,6 @@ class Session:
         self.cards_seen = cards_seen
         self.rumours = rumours
 
-    def get_cards(self):
-        return self.cards_seen
-
     def get_cards(self, player: Player):
         return self.cards_seen[player]
 

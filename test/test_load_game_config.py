@@ -1,12 +1,6 @@
 import unittest
 
-from gamestate import GameState
-from knowledge import Knowledge
 from load_game_config import load_game_config
-from player import Player
-from rumour import Rumour
-from session import Session
-from test.fixture.context import Cards
 from test.fixture.expected_game_config import ExpectedGameConfig
 
 
