@@ -15,12 +15,12 @@ class TestUserIO(TestCase):
         watson = Watson(context, session)
         shell = WatsonShell(watson)
         shell.onecmd("card Tom Roodhart")
-        self.assertEqual(watson.knowledge_tables.get(watson.context.players[0], Cards.ROODHART),
+        self.assertEqual(watson.get_knowledge_table().get(watson.context.players[0], Cards.ROODHART),
                          Knowledge.TRUE)
         for i in range(len(watson.context.players)):
             if i > 0:
                 self.assertEqual(
-                    watson.knowledge_tables.get(watson.context.players[i], Cards.ROODHART),
+                    watson.get_knowledge_table().get(watson.context.players[i], Cards.ROODHART),
                     Knowledge.FALSE)
 
     reply_string1 = "Tom n"

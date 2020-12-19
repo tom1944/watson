@@ -6,7 +6,6 @@ from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 
 
-
 class TestKnowledgeTable(TestCase):
     def setUp(self):
         context, session = load_game_config('test/fixture/game_config.json')

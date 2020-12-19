@@ -14,47 +14,47 @@ from session import Session
 class Watson:
     def __init__(self, context: Context, session: Session):
         self.context = context
-        self.knowledge_tables = KnowledgeTable(context.players, context.cards)
+        self.knowledge_table = KnowledgeTable(context.players, context.cards)
         self.session = session
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.derive_knowledge(player, card, knowledge)
 
     def derive_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
-        self.knowledge_tables.set(player, card, knowledge)
+        self.knowledge_table.set(player, card, knowledge)
 
         # Exclusion: Other players cannot have the same card
         if knowledge == Knowledge.TRUE:  # Exclude other players if a player has a card
             for other_player in self.context.players:
                 if other_player != player:
-                    self.knowledge_tables.set(other_player, card, Knowledge.FALSE)
+                    self.knowledge_table.set(other_player, card, Knowledge.FALSE)
 
         # Max cards: A player cannot have more cards than he has
         for player in self.context.players:  # Count known cards
             card_amount = self.count_cards(player)
             if card_amount == player.cardAmount:
                 for card in self.context.cards:
-                    if self.knowledge_tables.get(player, card) == Knowledge.MAYBE:
+                    if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                         self.add_knowledge(player, card, Knowledge.FALSE)
 
     def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
         for player in self.context.players:
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.MAYBE:
+                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
 
-                    self.knowledge_tables.set(player, card, Knowledge.TRUE)  # Try to fill in true
+                    self.knowledge_table.set(player, card, Knowledge.TRUE)  # Try to fill in true
                     if not self.has_solution():
-                        self.knowledge_tables.set_forcefully(player, card, Knowledge.MAYBE)
+                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
                         self.add_knowledge(player, card, Knowledge.FALSE)
                         continue
 
-                    self.knowledge_tables.set(player, card, Knowledge.FALSE)  # Try to fill in false
+                    self.knowledge_table.set(player, card, Knowledge.FALSE)  # Try to fill in false
                     if not self.has_solution():
-                        self.knowledge_tables.set_forcefully(player, card, Knowledge.MAYBE)
+                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
                         self.add_knowledge(player, card, Knowledge.TRUE)
                     else:
-                        self.knowledge_tables.set_forcefully(player, card, Knowledge.MAYBE)
+                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
 
     def add_rumour(self, rumour: Rumour) -> None:
         self.session.add_rumour(rumour)
@@ -72,18 +72,18 @@ class Watson:
             return self.check_knowledge()
 
         category, player, card = next_maybe
-        self.knowledge_tables.set(player, card, Knowledge.TRUE)  # Try true
+        self.knowledge_table.set(player, card, Knowledge.TRUE)  # Try true
         if self.check_knowledge():
             if self.has_solution():
-                self.knowledge_tables.set(player, card, Knowledge.MAYBE)  # Reset
+                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
                 return True
 
-        self.knowledge_tables.set(player, card, Knowledge.FALSE)  # Try false
+        self.knowledge_table.set(player, card, Knowledge.FALSE)  # Try false
         if self.check_knowledge():
             if self.has_solution():
-                self.knowledge_tables.set(player, card, Knowledge.MAYBE)  # Reset
+                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
                 return True
-        self.knowledge_tables.set(player, card, Knowledge.MAYBE)  # Reset
+        self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
         return False
 
     def smart_has_solution(self) -> bool:
@@ -96,9 +96,9 @@ class Watson:
             player_hands[player] = []
             cards_owned[player] = 0
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.MAYBE:
+                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                     available_cards[player].append(card)
-                elif self.knowledge_tables.get(player, card) == Knowledge.TRUE:
+                elif self.knowledge_table.get(player, card) == Knowledge.TRUE:
                     cards_owned[player] += 1
 
         choose_weapon = [c for c in unknown_cards if c.category == Category.WEAPON]
@@ -142,13 +142,13 @@ class Watson:
                 if knowledge == Knowledge.FALSE:
                     # Replier should not have any of the rumoured cards
                     for rumour_card in rumour_cards:
-                        if self.knowledge_tables.get(replier, rumour_card) == Knowledge.TRUE:
+                        if self.knowledge_table.get(replier, rumour_card) == Knowledge.TRUE:
                             return False
                 else:
                     # Replier should have any of the rumoured cards
                     true_or_maybe_found = False
                     for rumour_card in rumour_cards:
-                        if self.knowledge_tables.get(replier, rumour_card) != Knowledge.FALSE:
+                        if self.knowledge_table.get(replier, rumour_card) != Knowledge.FALSE:
                             true_or_maybe_found = True
                             break
                     if not true_or_maybe_found:
@@ -157,7 +157,7 @@ class Watson:
         for player in self.context.players:
             card_amount = 0
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.TRUE:
+                if self.knowledge_table.get(player, card) == Knowledge.TRUE:
                     card_amount += 1
             if card_amount > player.cardAmount:
                 return False
@@ -168,7 +168,7 @@ class Watson:
         for player in self.context.players:
             already_owned[player] = []
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.TRUE:
+                if self.knowledge_table.get(player, card) == Knowledge.TRUE:
                     already_owned[player].append(card)
             if len(player_hands[player]+already_owned[player]) > player.cardAmount:
                 return False
@@ -193,14 +193,14 @@ class Watson:
     def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
         for player in self.context.players:
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.MAYBE:
+                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                     return card.category, player, card
         return None
 
     def count_cards(self, player) -> int:
         card_count = 0
         for card in self.context.cards:
-            if self.knowledge_tables.get(player, card) == Knowledge.TRUE:
+            if self.knowledge_table.get(player, card) == Knowledge.TRUE:
                 card_count += 1
         return card_count
 
@@ -208,6 +208,9 @@ class Watson:
         known_cards = []
         for player in self.context.players:
             for card in self.context.cards:
-                if self.knowledge_tables.get(player, card) == Knowledge.TRUE:
+                if self.knowledge_table.get(player, card) == Knowledge.TRUE:
                     known_cards.append(card)
         return known_cards
+
+    def get_knowledge_table(self) -> KnowledgeTable:
+        return self.knowledge_table

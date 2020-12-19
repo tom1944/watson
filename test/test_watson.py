@@ -15,16 +15,17 @@ class TestWatson(TestCase):
         self.empty_watson = Watson(context, session)
 
         small_watson = Watson(context, session)
-        players = small_watson.context.players
-        small_watson.knowledge_tables.set(players[0], Cards.MES, Knowledge.TRUE)
-        small_watson.knowledge_tables.set(players[1], Cards.MES, Knowledge.FALSE)
-        small_watson.knowledge_tables.set(players[2], Cards.MES, Knowledge.FALSE)
+        players = context.players
+        knowledge_table = small_watson.get_knowledge_table()
+        knowledge_table.set(players[0], Cards.MES, Knowledge.TRUE)
+        knowledge_table.set(players[1], Cards.MES, Knowledge.FALSE)
+        knowledge_table.set(players[2], Cards.MES, Knowledge.FALSE)
 
-        small_watson.knowledge_tables.set(players[0], Cards.BUBBELBAD, Knowledge.FALSE)
-        small_watson.knowledge_tables.set(players[1], Cards.BUBBELBAD, Knowledge.TRUE)
-        small_watson.knowledge_tables.set(players[2], Cards.BUBBELBAD, Knowledge.FALSE)
+        knowledge_table.set(players[0], Cards.BUBBELBAD, Knowledge.FALSE)
+        knowledge_table.set(players[1], Cards.BUBBELBAD, Knowledge.TRUE)
+        knowledge_table.set(players[2], Cards.BUBBELBAD, Knowledge.FALSE)
 
-        small_watson.knowledge_tables.set(players[2], Cards.PIMPEL, Knowledge.FALSE)
+        knowledge_table.set(players[2], Cards.PIMPEL, Knowledge.FALSE)
 
         self.small_watson = small_watson
 
@@ -50,11 +51,11 @@ class TestWatson(TestCase):
 
         for card in context.cards:
             for player in context.players:
-                full_watson.knowledge_tables.set(player, card, Knowledge.FALSE)
+                full_watson.get_knowledge_table().set(player, card, Knowledge.FALSE)
 
         for player, cards in player_hands.items():
             for card in cards:
-                full_watson.knowledge_tables.set_forcefully(player, card, Knowledge.TRUE)
+                full_watson.get_knowledge_table().set_forcefully(player, card, Knowledge.TRUE)
 
         return full_watson
 
@@ -102,8 +103,8 @@ class TestWatson(TestCase):
     def test_check_knowledge_card_amount(self):
         watson = self.full_watson
         game_state = watson.context
-        watson.knowledge_tables.set_forcefully(game_state.players[0], Cards.PIMPEL, Knowledge.TRUE)
-        watson.knowledge_tables.set_forcefully(game_state.players[1], Cards.PIMPEL, Knowledge.FALSE)
+        watson.get_knowledge_table().set_forcefully(game_state.players[0], Cards.PIMPEL, Knowledge.TRUE)
+        watson.get_knowledge_table().set_forcefully(game_state.players[1], Cards.PIMPEL, Knowledge.FALSE)
         self.assertFalse(watson.check_knowledge())
 
     def test_smart_check_knowledge(self):
@@ -182,7 +183,7 @@ class TestWatson(TestCase):
         watson = self.empty_watson
         context = watson.context
         session = watson.session
-        knowledge_tables = watson.knowledge_tables
+        knowledge_tables = watson.get_knowledge_table()
 
         rum1 = Rumour(
             context.players[0],
@@ -202,7 +203,7 @@ class TestWatson(TestCase):
         watson = self.empty_watson
         context = watson.context
         session = watson.session
-        knowledge_tables = watson.knowledge_tables
+        knowledge_tables = watson.get_knowledge_table()
 
         rum1 = Rumour(
             context.players[0],
@@ -276,7 +277,7 @@ class TestWatson(TestCase):
         watson.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
 
         for player in game_state.players:
-            knowledge = watson.knowledge_tables.get(player, Cards.KNUPPEL)
+            knowledge = watson.get_knowledge_table().get(player, Cards.KNUPPEL)
             if player == game_state.players[0]:
                 self.assertEqual(knowledge, Knowledge.TRUE)
             else:
@@ -287,8 +288,8 @@ class TestWatson(TestCase):
         game_state = self.empty_watson.context
         watson = self.empty_watson
 
-        watson.knowledge_tables.set(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
-        watson.knowledge_tables.set(game_state.players[2], Cards.HAL, Knowledge.FALSE)
+        watson.knowledge_table.set(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
+        watson.knowledge_table.set(game_state.players[2], Cards.HAL, Knowledge.FALSE)
 
         test_rumour = Rumour(
             game_state.players[1],
@@ -301,6 +302,6 @@ class TestWatson(TestCase):
 
         watson.add_rumour(test_rumour)
         self.assertEqual(
-            watson.knowledge_tables.get(game_state.players[2], Cards.ROODHART),
+            watson.knowledge_table.get(game_state.players[2], Cards.ROODHART),
             Knowledge.TRUE
         )
