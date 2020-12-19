@@ -6,7 +6,7 @@ from knowledge_table import KnowledgeTable
 from rumour import Rumour
 from session import Session
 from test.fixture.context import Cards, ctx
-from test.fixture.expected_game_config import ExpectedGameConfig
+from test.fixture.session import ExpectedSession
 
 
 class TestBruteForcer(unittest.TestCase):
@@ -37,7 +37,7 @@ class TestBruteForcer(unittest.TestCase):
         unknown_cards = self.context.cards
         self.assertTrue(brute_forcer.smart_check_knowledge(player_hands, unknown_cards))
 
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         players = self.context.players
         brute_forcer.knowledge_table = self.small_knowledge_table
         player_hands = {}

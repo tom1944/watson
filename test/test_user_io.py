@@ -4,14 +4,14 @@ from unittest.mock import patch
 import user_io
 from knowledge import Knowledge
 from test.fixture.context import Cards
-from test.fixture.expected_game_config import ExpectedGameConfig
+from test.fixture.session import ExpectedSession
 from user_io import WatsonShell
 from watson import Watson
 
 
 class TestUserIO(TestCase):
     def test_do_card(self):
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         watson = Watson(session)
         shell = WatsonShell(watson)
         shell.onecmd("card Tom Roodhart")
@@ -29,7 +29,7 @@ class TestUserIO(TestCase):
 
     @patch('builtins.input', side_effect=[reply_string1, reply_string2, end_string])
     def test_do_rumour(self, mock_inputs):
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         watson = Watson(session)
         shell = WatsonShell(watson)
         shell.onecmd("r Menno rood bijl eetkamer")

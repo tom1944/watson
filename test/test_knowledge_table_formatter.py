@@ -4,12 +4,12 @@ from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from knowledge_table_formatter import KnowledgeTableFormatter
 from test.fixture.context import *
-from test.fixture.expected_game_config import ExpectedGameConfig
+from test.fixture.session import ExpectedSession
 
 
 class TestKnowledgeTable(TestCase):
     def test_format_knowledge_table(self):
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         knowledge_table = KnowledgeTable(session.get_context().players, session.get_context().cards)
         knowledge_table.set(knowledge_table.players[0], Cards.EETKAMER, Knowledge.FALSE)
         knowledge_table.set(knowledge_table.players[2], Cards.ROODHART, Knowledge.TRUE)

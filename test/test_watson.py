@@ -4,13 +4,13 @@ from knowledge import Knowledge
 from rumour import Rumour
 from session import Session
 from test.fixture.context import Cards
-from test.fixture.expected_game_config import ExpectedGameConfig
+from test.fixture.session import ExpectedSession
 from watson import Watson
 
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         context = session.context
         session = Session(context, {}, [])
         self.empty_watson = Watson(session)
@@ -33,7 +33,7 @@ class TestWatson(TestCase):
         self.full_watson = self.create_full_watson()
 
     def create_full_watson(self) -> Watson:
-        session = ExpectedGameConfig.session
+        session = ExpectedSession.session
         context = session.get_context()
         full_watson = Watson(session)
 
@@ -139,7 +139,7 @@ class TestWatson(TestCase):
 
         self.assertTrue(watson.has_solution())
 
-    #@skip
+    @skip
     def test_has_solution_false_negative(self):
         watson = self.empty_watson
         context = watson.context
@@ -159,7 +159,7 @@ class TestWatson(TestCase):
         knowledge_tables.set(context.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
         self.assertFalse(watson.has_solution())
 
-    #@skip
+    @skip
     def test_has_solution_false_positive(self):
         watson = self.empty_watson
         context = watson.context

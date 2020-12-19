@@ -6,7 +6,7 @@ from session import Session
 from test.fixture.context import Cards
 
 
-class ExpectedGameConfig:
+class ExpectedSession:
     player1 = Player("Tom", "Roodhart", 6)
     player2 = Player("Menno", "Blaauw van Draet", 6)
     player3 = Player("Michiel", "De Wit", 6)
