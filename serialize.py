@@ -1,12 +1,12 @@
 import json
 
 from card import Category
-from gamestate import GameState
+from context import Context
 from knowledge import Knowledge
 from session import Session
 
 
-def serialize(game_state: GameState, session: Session, filename: str):
+def serialize(game_state: Context, session: Session, filename: str):
     config = {}
     config["players"] = []
     for player in game_state.players:

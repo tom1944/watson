@@ -1,17 +1,18 @@
 from unittest import TestCase
 
+from load_game_config import load_game_config
 from test.fixture.context import *
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from knowledge_table_formatter import KnowledgeTableFormatter
-from load_game_state import load_game_state
 from watson import Watson
 
 
 class TestKnowledgeTable(TestCase):
     def test_format_knowledge_table(self):
-        watson = Watson(load_game_state('test/fixture/game_config.json'))
-        knowledge_table = KnowledgeTable(watson.game_state.players, watson.game_state.cards)
+        context, session = load_game_config('test/fixture/game_config.json')
+        watson = Watson(context, session)
+        knowledge_table = KnowledgeTable(watson.context.players, watson.context.cards)
         knowledge_table.set(knowledge_table.players[0], Cards.EETKAMER, Knowledge.FALSE)
         knowledge_table.set(knowledge_table.players[2], Cards.ROODHART, Knowledge.TRUE)
         printer = KnowledgeTableFormatter()

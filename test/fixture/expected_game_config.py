@@ -1,4 +1,4 @@
-from gamestate import GameState
+from context import Context
 from knowledge import Knowledge
 from player import Player
 from rumour import Rumour
@@ -17,7 +17,7 @@ class ExpectedGameConfig:
              Cards.BUBBELBAD, Cards.GASTENVERBLIJF, Cards.PIMPEL, Cards.GROENEWOUD,
              Cards.BLAAUWVANDRAET, Cards.ROODHART, Cards.DEWIT]
 
-    game_state = GameState([player1, player2, player3], cards)
+    context = Context([player1, player2, player3], cards)
 
     cards_seen = {player1: [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL],
                   player2: [],

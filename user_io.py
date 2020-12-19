@@ -24,8 +24,8 @@ class WatsonShell(Cmd):
 
         owner_name, card_name = args
 
-        card = match_card(card_name, self.watson.game_state.cards)
-        owner = match_player(owner_name, self.watson.game_state.players)
+        card = match_card(card_name, self.watson.context.cards)
+        owner = match_player(owner_name, self.watson.context.players)
 
         if not card or not owner:
             return False
@@ -46,8 +46,8 @@ class WatsonShell(Cmd):
 
         claimer_name = args[0]
         card_names = args[1:]
-        rumour_cards = [match_card(card_name, self.watson.game_state.cards) for card_name in card_names]
-        claimer = match_player(claimer_name, self.watson.game_state.players)
+        rumour_cards = [match_card(card_name, self.watson.context.cards) for card_name in card_names]
+        claimer = match_player(claimer_name, self.watson.context.players)
 
         if not all(rumour_cards) or not claimer:
             return False
@@ -78,7 +78,7 @@ class WatsonShell(Cmd):
             if len(response) != 2:
                 print("Usage: <Player> <y|n>")
                 continue
-            player = match_player(response[0], self.watson.game_state.players)
+            player = match_player(response[0], self.watson.context.players)
             if response[1] == "y":
                 knowledge = Knowledge.TRUE
             elif response[1] == "n":

@@ -1,20 +1,22 @@
 from unittest import TestCase
 
+from load_game_config import load_game_config
 from test.fixture.context import Cards
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
-from load_game_state import load_game_state
+
 
 
 class TestKnowledgeTable(TestCase):
     def setUp(self):
-        self.game_state = load_game_state('test/fixture/game_config.json')
-        self.some_player = self.game_state.players[0]
-        self.knowledge_table = KnowledgeTable(self.game_state.players, self.game_state.cards)
+        context, session = load_game_config('test/fixture/game_config.json')
+        self.context = context
+        self.some_player = self.context.players[0]
+        self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
 
     def test_new_knowledge_table(self):
-        for player in self.game_state.players:
-            for card in self.game_state.cards:
+        for player in self.context.players:
+            for card in self.context.cards:
                 self.assertEqual(self.knowledge_table.get(player, card), Knowledge.MAYBE)
 
     def test_set(self):
@@ -36,7 +38,7 @@ class TestKnowledgeTable(TestCase):
     def test_current_player_hands(self):
         knowledge_table = self.knowledge_table
 
-        for player in self.game_state.players:
+        for player in self.context.players:
             knowledge_table.set(player, Cards.KNUPPEL, Knowledge.FALSE)
 
         knowledge_table.set(self.some_player, Cards.TOUW, Knowledge.TRUE)

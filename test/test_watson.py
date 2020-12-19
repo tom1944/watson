@@ -1,6 +1,7 @@
 from unittest import TestCase, skip
 
-from load_game_state import load_game_state
+from load_game_config import load_game_config
+from session import Session
 from watson import Watson
 from rumour import Rumour
 from test.fixture.context import Cards
@@ -9,10 +10,12 @@ from knowledge import Knowledge
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
-        self.empty_watson = Watson(load_game_state('test/fixture/game_config.json'))
+        context, session = load_game_config('test/fixture/game_config.json')
+        session = Session({}, [])
+        self.empty_watson = Watson(context, session)
 
-        small_watson = Watson(load_game_state('test/fixture/game_config.json'))
-        players = small_watson.game_state.players
+        small_watson = Watson(context, session)
+        players = small_watson.context.players
         small_watson.knowledge_tables.set(players[0], Cards.MES, Knowledge.TRUE)
         small_watson.knowledge_tables.set(players[1], Cards.MES, Knowledge.FALSE)
         small_watson.knowledge_tables.set(players[2], Cards.MES, Knowledge.FALSE)
@@ -28,8 +31,8 @@ class TestWatson(TestCase):
         self.full_watson = self.create_full_watson()
 
     def create_full_watson(self) -> Watson:
-        full_game_state = load_game_state('test/fixture/game_config.json')
-        full_watson = Watson(full_game_state)
+        context, session = load_game_config('test/fixture/game_config.json')
+        full_watson = Watson(context, session)
 
         self.murderer = Cards.GROENEWOUD
         self.murder_weapon = Cards.PISTOOL
@@ -37,16 +40,16 @@ class TestWatson(TestCase):
         self.murder_cards = [self.murderer, self.murder_weapon, self.murder_location]
 
         player_hands = {
-            full_game_state.players[0]: [Cards.MES, Cards.KANDELAAR, Cards.WERKKAMER, Cards.THEATER, Cards.ZITKAMER,
-                                         Cards.DEWIT],
-            full_game_state.players[1]: [Cards.VERGIF, Cards.TOUW, Cards.KNUPPEL, Cards.BUBBELBAD, Cards.GASTENVERBLIJF,
-                                         Cards.PIMPEL],
-            full_game_state.players[2]: [Cards.BIJL, Cards.HALTER, Cards.EETKAMER, Cards.BLAAUWVANDRAET,
-                                         Cards.ROODHART],
+            context.players[0]: [Cards.MES, Cards.KANDELAAR, Cards.WERKKAMER, Cards.THEATER, Cards.ZITKAMER,
+                                 Cards.DEWIT],
+            context.players[1]: [Cards.VERGIF, Cards.TOUW, Cards.KNUPPEL, Cards.BUBBELBAD, Cards.GASTENVERBLIJF,
+                                 Cards.PIMPEL],
+            context.players[2]: [Cards.BIJL, Cards.HALTER, Cards.EETKAMER, Cards.BLAAUWVANDRAET,
+                                 Cards.ROODHART]
         }
 
-        for card in full_game_state.cards:
-            for player in full_game_state.players:
+        for card in context.cards:
+            for player in context.players:
                 full_watson.knowledge_tables.set(player, card, Knowledge.FALSE)
 
         for player, cards in player_hands.items():
@@ -57,10 +60,11 @@ class TestWatson(TestCase):
 
     def test_check_knowledge(self):
         watson = self.small_watson
-        game_state = watson.game_state
-        players = game_state.players
+        context = watson.context
+        session = watson.session
+        players = context.players
 
-        game_state.rumours = [
+        session.rumours = [
             Rumour(
                 players[0],
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -73,7 +77,7 @@ class TestWatson(TestCase):
 
         self.assertTrue(watson.check_knowledge())
 
-        game_state.rumours.append(
+        session.rumours.append(
             Rumour(
                 players[1],
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -85,7 +89,7 @@ class TestWatson(TestCase):
 
         self.assertFalse(watson.check_knowledge())
 
-        game_state.rumours[1] = Rumour(
+        session.rumours[1] = Rumour(
             players[0],
             [Cards.MES, Cards.BUBBELBAD, Cards.PIMPEL],
             [
@@ -97,29 +101,30 @@ class TestWatson(TestCase):
 
     def test_check_knowledge_card_amount(self):
         watson = self.full_watson
-        game_state = watson.game_state
+        game_state = watson.context
         watson.knowledge_tables.set_forcefully(game_state.players[0], Cards.PIMPEL, Knowledge.TRUE)
         watson.knowledge_tables.set_forcefully(game_state.players[1], Cards.PIMPEL, Knowledge.FALSE)
         self.assertFalse(watson.check_knowledge())
 
     def test_smart_check_knowledge(self):
         watson = self.empty_watson
-        game_state = watson.game_state
+        context = watson.context
         player_hands = {}
-        for player in game_state.players:
+        for player in context.players:
             player_hands[player] = []
-        unknown_cards = game_state.cards
+        unknown_cards = context.cards
         self.assertTrue(watson.smart_check_knowledge(player_hands, unknown_cards))
 
         watson = self.small_watson
-        game_state = watson.game_state
-        players = game_state.players
+        context = watson.context
+        session = watson.session
+        players = context.players
         player_hands = {}
         for player in players:
             player_hands[player] = []
-        unknown_cards = game_state.cards
+        unknown_cards = context.cards
 
-        game_state.rumours = [
+        session.rumours = [
             Rumour(
                 players[0],
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -131,7 +136,7 @@ class TestWatson(TestCase):
         ]
         self.assertTrue(watson.smart_check_knowledge(player_hands, unknown_cards))
 
-        game_state.rumours.append(
+        session.rumours.append(
             Rumour(
                 players[1],
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -148,122 +153,126 @@ class TestWatson(TestCase):
 
     def test_has_solution_basic(self):
         watson = self.empty_watson
-        game_state = watson.game_state
+        context = watson.context
+        session = watson.session
         rum1 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
-                (game_state.players[1], Knowledge.FALSE),
-                (game_state.players[2], Knowledge.TRUE)
+                (context.players[1], Knowledge.FALSE),
+                (context.players[2], Knowledge.TRUE)
             ]
         )
 
         rum2 = Rumour(
-            game_state.players[1],
+            context.players[1],
             [Cards.HALTER, Cards.HAL, Cards.PIMPEL],
             [
-                (game_state.players[0], Knowledge.TRUE),
-                (game_state.players[2], Knowledge.FALSE)
+                (context.players[0], Knowledge.TRUE),
+                (context.players[2], Knowledge.FALSE)
             ]
         )
 
-        game_state.rumours = [rum1, rum2]
+        session.rumours = [rum1, rum2]
 
         self.assertTrue(watson.has_solution())
 
     @skip
     def test_has_solution_false_negative(self):
         watson = self.empty_watson
-        game_state = watson.game_state
+        context = watson.context
+        session = watson.session
         knowledge_tables = watson.knowledge_tables
 
         rum1 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
-                (game_state.players[1], Knowledge.FALSE),
-                (game_state.players[2], Knowledge.TRUE)
+                (context.players[1], Knowledge.FALSE),
+                (context.players[2], Knowledge.TRUE)
             ]
         )
 
-        game_state.rumours = [rum1]
-        knowledge_tables.set(game_state.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
+        session.rumours = [rum1]
+        knowledge_tables.set(context.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
         self.assertFalse(watson.has_solution())
 
     @skip
     def test_has_solution_false_positive(self):
         watson = self.empty_watson
-        game_state = watson.game_state
+        context = watson.context
+        session = watson.session
         knowledge_tables = watson.knowledge_tables
 
         rum1 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
             [
-                (game_state.players[1], Knowledge.FALSE),
-                (game_state.players[2], Knowledge.TRUE)
+                (context.players[1], Knowledge.FALSE),
+                (context.players[2], Knowledge.TRUE)
             ]
         )
 
         rum2 = Rumour(
-            game_state.players[1],
+            context.players[1],
             [Cards.HALTER, Cards.HAL, Cards.PIMPEL],
             [
-                (game_state.players[0], Knowledge.TRUE),
-                (game_state.players[2], Knowledge.FALSE)
+                (context.players[0], Knowledge.TRUE),
+                (context.players[2], Knowledge.FALSE)
             ]
         )
 
-        game_state.rumours = [rum1, rum2]
+        session.rumours = [rum1, rum2]
 
-        knowledge_tables.set(game_state.players[0], Cards.HALTER, Knowledge.FALSE)
-        knowledge_tables.set(game_state.players[0], Cards.HAL, Knowledge.FALSE)
-        knowledge_tables.set(game_state.players[0], Cards.PIMPEL, Knowledge.FALSE)
+        knowledge_tables.set(context.players[0], Cards.HALTER, Knowledge.FALSE)
+        knowledge_tables.set(context.players[0], Cards.HAL, Knowledge.FALSE)
+        knowledge_tables.set(context.players[0], Cards.PIMPEL, Knowledge.FALSE)
         self.assertFalse(watson.has_solution())
 
     @skip
     def test_has_solution_triplet(self):
-        game_state = self.empty_watson.game_state
-        knowledge_tables = game_state.knowledge_tables
+        context = self.empty_watson.context
+        session = self.empty_watson.session
+        knowledge_tables = context.knowledge_tables
 
         rum1 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.DEWIT],
             [
-                (game_state.players[1], Knowledge.TRUE),
-                (game_state.players[2], Knowledge.FALSE)
+                (context.players[1], Knowledge.TRUE),
+                (context.players[2], Knowledge.FALSE)
             ]
         )
 
         rum2 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.ROODHART],
             [
-                (game_state.players[1], Knowledge.TRUE),
-                (game_state.players[2], Knowledge.FALSE)
+                (context.players[1], Knowledge.TRUE),
+                (context.players[2], Knowledge.FALSE)
             ]
         )
 
         rum3 = Rumour(
-            game_state.players[0],
+            context.players[0],
             [Cards.HALTER, Cards.GASTENVERBLIJF, Cards.BLAAUWVANDRAET],
             [
-                (game_state.players[1], Knowledge.TRUE),
-                (game_state.players[2], Knowledge.FALSE)
+                (context.players[1], Knowledge.TRUE),
+                (context.players[2], Knowledge.FALSE)
             ]
         )
-        game_state.rumours = [rum1, rum2, rum3]
-        knowledge_tables.set(game_state.players[1], Cards.HALTER, Knowledge.FALSE)
-        knowledge_tables.set(game_state.players[1], Cards.GASTENVERBLIJF, Knowledge.FALSE)
-        knowledge_tables.set(game_state.players[1], Cards.VERGIF, Knowledge.TRUE)
-        knowledge_tables.set(game_state.players[1], Cards.TOUW, Knowledge.TRUE)
-        knowledge_tables.set(game_state.players[1], Cards.KNUPPEL, Knowledge.TRUE)
-        knowledge_tables.set(game_state.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
-        self.assertFalse(game_state.has_solution())
+        session.rumours = [rum1, rum2, rum3]
+        knowledge_tables.set(context.players[1], Cards.HALTER, Knowledge.FALSE)
+        knowledge_tables.set(context.players[1], Cards.GASTENVERBLIJF, Knowledge.FALSE)
+        knowledge_tables.set(context.players[1], Cards.VERGIF, Knowledge.TRUE)
+        knowledge_tables.set(context.players[1], Cards.TOUW, Knowledge.TRUE)
+        knowledge_tables.set(context.players[1], Cards.KNUPPEL, Knowledge.TRUE)
+        knowledge_tables.set(context.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
+        self.assertFalse(context.has_solution())
 
     def test_add_card(self):
         watson = self.empty_watson
-        game_state = watson.game_state
+        game_state = watson.context
         watson.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
 
         for player in game_state.players:
@@ -275,7 +284,7 @@ class TestWatson(TestCase):
 
     @skip
     def test_add_rumour(self):
-        game_state = self.empty_watson.game_state
+        game_state = self.empty_watson.context
         watson = self.empty_watson
 
         watson.knowledge_tables.set(game_state.players[2], Cards.KANDELAAR, Knowledge.FALSE)
