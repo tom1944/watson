@@ -107,47 +107,6 @@ class TestWatson(TestCase):
         watson.get_knowledge_table().set_forcefully(game_state.players[1], Cards.PIMPEL, Knowledge.FALSE)
         self.assertFalse(watson.check_knowledge())
 
-    def test_smart_check_knowledge(self):
-        watson = self.empty_watson
-        context = watson.context
-        player_hands = {}
-        for player in context.players:
-            player_hands[player] = []
-        unknown_cards = context.cards
-        self.assertTrue(watson.smart_check_knowledge(player_hands, unknown_cards))
-
-        watson = self.small_watson
-        context = watson.context
-        session = watson.session
-        players = context.players
-        player_hands = {}
-        for player in players:
-            player_hands[player] = []
-        unknown_cards = context.cards
-
-        session.rumours = [
-            Rumour(
-                players[0],
-                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
-                [
-                    (players[1], Knowledge.FALSE),
-                    (players[2], Knowledge.TRUE),
-                ]
-            )
-        ]
-        self.assertTrue(watson.smart_check_knowledge(player_hands, unknown_cards))
-
-        session.rumours.append(
-            Rumour(
-                players[1],
-                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
-                [
-                    (players[0], Knowledge.FALSE),
-                ]
-            )
-        )
-        self.assertFalse(watson.smart_check_knowledge(player_hands, unknown_cards))
-
     def test_has_solution_trivial(self):
         watson = self.empty_watson
         self.assertTrue(watson.has_solution())   # Trivial
@@ -178,7 +137,7 @@ class TestWatson(TestCase):
 
         self.assertTrue(watson.has_solution())
 
-    @skip
+    #@skip
     def test_has_solution_false_negative(self):
         watson = self.empty_watson
         context = watson.context
@@ -198,7 +157,7 @@ class TestWatson(TestCase):
         knowledge_tables.set(context.players[1], Cards.BUBBELBAD, Knowledge.TRUE)
         self.assertFalse(watson.has_solution())
 
-    @skip
+    #@skip
     def test_has_solution_false_positive(self):
         watson = self.empty_watson
         context = watson.context
