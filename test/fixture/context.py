@@ -1,6 +1,7 @@
 from typing import List
 
 from card import Card, Category
+from context import Context
 from player import Player
 
 
@@ -33,7 +34,7 @@ class Cards:
     DEWIT = Card('De Wit', Category.CHARACTER)
 
 
-def make_cards() -> List[Card]:
+def _make_cards() -> List[Card]:
     return list(_get_members_of_class(Cards))
 
 
@@ -51,4 +52,9 @@ tom = Player("Tom", "Roodhart", 6)
 menno = Player("Menno", "Blaauw van Draet", 6)
 michiel = Player("Michiel", "De Wit", 6)
 
-players = [tom, menno, michiel]
+
+def _make_players() -> List[Player]:
+    return [tom, menno, michiel]
+
+
+ctx = Context(_make_players(), _make_cards())
