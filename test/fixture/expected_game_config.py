@@ -24,4 +24,4 @@ class ExpectedGameConfig:
                   player3: []}
     rumours = [Rumour(player2, [Cards.MES, Cards.HAL, Cards.PIMPEL], [(player1, Knowledge.TRUE),
                                                                       (player3, Knowledge.FALSE)])]
-    session = Session(cards_seen, rumours)
+    session = Session(context, cards_seen, rumours)

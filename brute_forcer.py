@@ -10,9 +10,9 @@ from session import Session
 
 
 class BruteForcer:
-    def __init__(self, context: Context, session: Session, knowledge_table: KnowledgeTable):
-        self.context = context
+    def __init__(self, session: Session, knowledge_table: KnowledgeTable):
         self.session = session
+        self.context = session.context
         self.knowledge_table = knowledge_table
 
     def known_cards(self) -> List[Card]:

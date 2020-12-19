@@ -9,7 +9,7 @@ from typing import List, Optional, Tuple
 
 class WatsonShell(Cmd):
     def __init__(self, watson: Watson, **kwargs):
-        Cmd.__init__(self, kwargs)
+        Cmd.__init__(self, **kwargs)
         self.watson = watson
         self.intro = "Welcome to Watson, the Cluedo assistant. Type help or ? to list commands.\n"
         self.prompt = ">>> "

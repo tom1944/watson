@@ -28,9 +28,9 @@ class TestBruteForcer(unittest.TestCase):
         self.small_knowledge_table = knowledge_table
 
     def test_smart_check_knowledge(self):
-        session = Session({}, [])
+        session = Session(self.context, {}, [])
         knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
-        brute_forcer = BruteForcer(self.context, session, knowledge_table)
+        brute_forcer = BruteForcer(session, knowledge_table)
         player_hands = {}
         for player in self.context.players:
             player_hands[player] = []

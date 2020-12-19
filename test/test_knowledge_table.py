@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from load_game_config import load_game_config
+from load_game_config import load_session
 from test.fixture.context import Cards
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
@@ -8,8 +8,8 @@ from knowledge_table import KnowledgeTable
 
 class TestKnowledgeTable(TestCase):
     def setUp(self):
-        context, session = load_game_config('test/fixture/game_config.json')
-        self.context = context
+        session = load_session('test/fixture/game_config.json')
+        self.context = session.get_context()
         self.some_player = self.context.players[0]
         self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
 
@@ -47,5 +47,3 @@ class TestKnowledgeTable(TestCase):
         self.assertIn(Cards.KNUPPEL, murderer_cards)
         self.assertIn(Cards.TOUW, player_hands[self.some_player])
         self.assertIn(Cards.PIMPEL, free_cards)
-
-

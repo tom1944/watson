@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 import user_io
-from load_game_config import load_game_config
+from load_game_config import load_session
 from test.fixture.context import Cards
 from knowledge import Knowledge
 from watson import Watson
@@ -11,16 +11,16 @@ from user_io import WatsonShell
 
 class TestUserIO(TestCase):
     def test_do_card(self):
-        context, session = load_game_config('test/fixture/game_config.json')
-        watson = Watson(context, session)
+        session = load_session('test/fixture/game_config.json')
+        watson = Watson(session)
         shell = WatsonShell(watson)
         shell.onecmd("card Tom Roodhart")
-        self.assertEqual(watson.get_knowledge_table().get(watson.context.players[0], Cards.ROODHART),
+        self.assertEqual(watson.get_knowledge_table().get(session.get_context().players[0], Cards.ROODHART),
                          Knowledge.TRUE)
         for i in range(len(watson.context.players)):
             if i > 0:
                 self.assertEqual(
-                    watson.get_knowledge_table().get(watson.context.players[i], Cards.ROODHART),
+                    watson.get_knowledge_table().get(session.get_context().players[i], Cards.ROODHART),
                     Knowledge.FALSE)
 
     reply_string1 = "Tom n"
@@ -29,8 +29,8 @@ class TestUserIO(TestCase):
 
     @patch('builtins.input', side_effect=[reply_string1, reply_string2, end_string])
     def test_do_rumour(self, mock_inputs):
-        context, session = load_game_config('test/fixture/game_config.json')
-        watson = Watson(context, session)
+        session = load_session('test/fixture/game_config.json')
+        watson = Watson(session)
         shell = WatsonShell(watson)
         shell.onecmd("r Menno rood bijl eetkamer")
         rumour = watson.session.rumours[1]

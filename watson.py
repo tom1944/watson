@@ -13,11 +13,11 @@ from session import Session
 
 
 class Watson:
-    def __init__(self, context: Context, session: Session):
-        self.context = context
+    def __init__(self, session: Session):
         self.session = session
-        self.knowledge_table = KnowledgeTable(context.players, context.cards)
-        self.brute_forcer = BruteForcer(self.context, self.session, self.knowledge_table)
+        self.context = session.context
+        self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
+        self.brute_forcer = BruteForcer(self.session, self.knowledge_table)
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.derive_knowledge(player, card, knowledge)

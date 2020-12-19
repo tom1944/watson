@@ -6,10 +6,11 @@ from knowledge import Knowledge
 from session import Session
 
 
-def serialize(game_state: Context, session: Session, filename: str):
+def serialize(session: Session, filename: str):
+    context = session.context
     config = {}
     config["players"] = []
-    for player in game_state.players:
+    for player in context.players:
         config["players"].append({
             "name": player.name,
             "character": player.character,
@@ -17,9 +18,9 @@ def serialize(game_state: Context, session: Session, filename: str):
         })
 
     config["cards"] = {
-        "Weapon": [c.name for c in game_state.cards if c.category == Category.WEAPON],
-        "Room": [c.name for c in game_state.cards if c.category == Category.ROOM],
-        "Character": [c.name for c in game_state.cards if c.category == Category.CHARACTER]
+        "Weapon": [c.name for c in context.cards if c.category == Category.WEAPON],
+        "Room": [c.name for c in context.cards if c.category == Category.ROOM],
+        "Character": [c.name for c in context.cards if c.category == Category.CHARACTER]
     }
     config["open_cards"] = []
     config["cards_seen"] = {}

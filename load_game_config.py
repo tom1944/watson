@@ -10,7 +10,7 @@ from rumour import Rumour
 from session import Session
 
 
-def load_game_config(filename: str) -> (Context, Session):
+def load_session(filename: str) -> (Context, Session):
     with open(filename, 'r') as file:
         config = json.load(file)
 
@@ -30,8 +30,7 @@ def load_game_config(filename: str) -> (Context, Session):
 
     cards_seen = retrieve_cards_seen(all_cards, cards_seen_json, players)
     rumours = retrieve_rumours(players, rumours_json, used_cards)
-
-    return Context(players, used_cards), Session(cards_seen, rumours)
+    return Session(Context(players, used_cards), cards_seen, rumours)
 
 
 def retrieve_rumours(players, rumours_json, used_cards) -> List[Rumour]:

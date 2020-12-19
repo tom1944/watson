@@ -1,13 +1,11 @@
 import unittest
 
-from load_game_config import load_game_config
+from load_game_config import load_session
 from test.fixture.expected_game_config import ExpectedGameConfig
 
 
-class TestLoadGameConfig(unittest.TestCase):
-    def test_load_game_config(self):
-        game_state, session = load_game_config('test/fixture/game_config.json')
-        expected_game_state = ExpectedGameConfig.context
+class TestLoadSession(unittest.TestCase):
+    def test_load_session(self):
+        session = load_session('test/fixture/game_config.json')
         expected_session = ExpectedGameConfig.session
-        self.assertEqual(game_state, expected_game_state)
         self.assertEqual(session, expected_session)

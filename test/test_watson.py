@@ -1,6 +1,6 @@
 from unittest import TestCase, skip
 
-from load_game_config import load_game_config
+from load_game_config import load_session
 from session import Session
 from watson import Watson
 from rumour import Rumour
@@ -10,11 +10,12 @@ from knowledge import Knowledge
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
-        context, session = load_game_config('test/fixture/game_config.json')
-        session = Session({}, [])
-        self.empty_watson = Watson(context, session)
+        session = load_session('test/fixture/game_config.json')
+        context = session.context
+        session = Session(context, {}, [])
+        self.empty_watson = Watson(session)
 
-        small_watson = Watson(context, session)
+        small_watson = Watson(session)
         players = context.players
         knowledge_table = small_watson.get_knowledge_table()
         knowledge_table.set(players[0], Cards.MES, Knowledge.TRUE)
@@ -32,8 +33,9 @@ class TestWatson(TestCase):
         self.full_watson = self.create_full_watson()
 
     def create_full_watson(self) -> Watson:
-        context, session = load_game_config('test/fixture/game_config.json')
-        full_watson = Watson(context, session)
+        session = load_session('test/fixture/game_config.json')
+        context = session.get_context()
+        full_watson = Watson(session)
 
         self.murderer = Cards.GROENEWOUD
         self.murder_weapon = Cards.PISTOOL
