@@ -1,16 +1,16 @@
 from unittest import TestCase, skip
 
-from load_game_config import load_session
-from session import Session
-from watson import Watson
-from rumour import Rumour
-from test.fixture.context import Cards
 from knowledge import Knowledge
+from rumour import Rumour
+from session import Session
+from test.fixture.context import Cards
+from test.fixture.expected_game_config import ExpectedGameConfig
+from watson import Watson
 
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
-        session = load_session('test/fixture/game_config.json')
+        session = ExpectedGameConfig.session
         context = session.context
         session = Session(context, {}, [])
         self.empty_watson = Watson(session)
@@ -33,7 +33,7 @@ class TestWatson(TestCase):
         self.full_watson = self.create_full_watson()
 
     def create_full_watson(self) -> Watson:
-        session = load_session('test/fixture/game_config.json')
+        session = ExpectedGameConfig.session
         context = session.get_context()
         full_watson = Watson(session)
 

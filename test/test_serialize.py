@@ -12,7 +12,7 @@ class TestSerialize(unittest.TestCase):
         session = load_session("serialize_test.json")
         if os.path.exists("serialize_test.json"):
             os.remove("serialize_test.json")
-        self.assertEqual(load_session('test/fixture/game_config.json'), session)
+        self.assertEqual(ExpectedGameConfig.session, session)
 
 
 
