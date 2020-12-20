@@ -3,13 +3,14 @@ from unittest import TestCase, skip
 from knowledge import Knowledge
 from rumour import Rumour
 from session import Session
-from test.fixture.context import Cards, context
+from test.fixture.context import Cards, context_fixture
 from test.fixture.session import ExpectedSession
 from watson import Watson
 
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
+        context = context_fixture
         session = Session(context)
         self.empty_watson = Watson(session)
 

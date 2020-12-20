@@ -3,11 +3,12 @@ from unittest import TestCase
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from knowledge_table_formatter import KnowledgeTableFormatter
-from test.fixture.context import Cards, context
+from test.fixture.context import Cards, context_fixture
 
 
 class TestKnowledgeTable(TestCase):
     def test_format_knowledge_table(self):
+        context = context_fixture
         knowledge_table = KnowledgeTable(context.players, context.cards)
         knowledge_table.set(knowledge_table.players[0], Cards.EETKAMER, Knowledge.FALSE)
         knowledge_table.set(knowledge_table.players[2], Cards.ROODHART, Knowledge.TRUE)

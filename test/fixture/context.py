@@ -59,4 +59,4 @@ def _make_players() -> List[Player]:
     return [tom, menno, michiel]
 
 
-context = Context(_make_players(), _make_cards())
+context_fixture = Context(_make_players(), _make_cards())

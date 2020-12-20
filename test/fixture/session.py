@@ -1,11 +1,11 @@
 from knowledge import Knowledge
 from rumour import Rumour
 from session import Session
-from test.fixture.context import Cards, context, tom, michiel, menno
+from test.fixture.context import Cards, context_fixture, tom, michiel, menno
 
 
 def make_session_fixture() -> Session:
-    session = Session(context)
+    session = Session(context_fixture)
     cards_tom = [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL]
 
     for c in cards_tom:

@@ -5,11 +5,12 @@ from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from rumour import Rumour
 from session import Session
-from test.fixture.context import context, Cards, tom, menno, michiel
+from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 
 class TestCheckKnowledge(unittest.TestCase):
     def setUp(self) -> None:
+        context = context_fixture
         self.empty_session = Session(context)
 
         knowledge_table = KnowledgeTable(context.players, context.cards)
@@ -33,6 +34,7 @@ class TestCheckKnowledge(unittest.TestCase):
 
     def test_empty_session(self):
         session = self.empty_session
+        context = session.get_context()
         self.assertTrue(check_knowledge(KnowledgeTable(context.players, context.cards), session))
 
     def test_small_game(self):

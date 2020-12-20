@@ -5,7 +5,7 @@ from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from rumour import Rumour
 from session import Session
-from test.fixture.context import Cards, context
+from test.fixture.context import Cards, context_fixture
 from test.fixture.session import ExpectedSession
 
 
