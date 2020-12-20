@@ -35,7 +35,9 @@ class Cards:
 
 
 def _make_cards() -> List[Card]:
-    return list(_get_members_of_class(Cards))
+    all_cards = list(_get_members_of_class(Cards))
+    open_cards = [Cards.TROFFEE, Cards.TERRAS, Cards.VANGEELEN]
+    return [c for c in all_cards if c not in open_cards]
 
 
 def _get_members_of_class(cls):
@@ -57,4 +59,4 @@ def _make_players() -> List[Player]:
     return [tom, menno, michiel]
 
 
-ctx = Context(_make_players(), _make_cards())
+context = Context(_make_players(), _make_cards())

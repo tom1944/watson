@@ -3,7 +3,7 @@ from unittest import TestCase
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from knowledge_table_formatter import KnowledgeTableFormatter
-from test.fixture.context import *
+from test.fixture.context import Cards
 from test.fixture.session import ExpectedSession
 
 
