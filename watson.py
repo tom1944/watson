@@ -47,35 +47,6 @@ class Watson:
                 for r_card in rumour.rumour_cards:
                     self.add_knowledge(player, r_card, Knowledge.FALSE)
 
-    def old_has_solution(self) -> bool:
-        return self.brute_forcer.has_solution()
-        # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings
-        next_maybe = self.find_maybe()
-        if next_maybe is None:  # Check the final solution
-            return self.check_knowledge()
-
-        category, player, card = next_maybe
-        self.knowledge_table.set(player, card, Knowledge.TRUE)  # Try true
-        if self.check_knowledge():
-            if self.old_has_solution():
-                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
-                return True
-
-        self.knowledge_table.set(player, card, Knowledge.FALSE)  # Try false
-        if self.check_knowledge():
-            if self.old_has_solution():
-                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
-                return True
-        self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
-        return False
-
-    def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
-        for player in self.context.players:
-            for card in self.context.cards:
-                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
-                    return card.category, player, card
-        return None
-
     def count_cards(self, player) -> int:
         card_count = 0
         for card in self.context.cards:
