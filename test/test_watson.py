@@ -61,54 +61,6 @@ class TestWatson(TestCase):
 
         return full_watson
 
-    def test_check_knowledge(self):
-        watson = self.small_watson
-        context = watson.context
-        session = watson.session
-        players = context.players
-
-        session.rumours = [
-            Rumour(
-                players[0],
-                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
-                [
-                    (players[1], Knowledge.FALSE),
-                    (players[2], Knowledge.TRUE),
-                ]
-            )
-        ]
-
-        self.assertTrue(watson.check_knowledge())
-
-        session.rumours.append(
-            Rumour(
-                players[1],
-                [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
-                [
-                    (players[0], Knowledge.FALSE),
-                ]
-            )
-        )
-
-        self.assertFalse(watson.check_knowledge())
-
-        session.rumours[1] = Rumour(
-            players[0],
-            [Cards.MES, Cards.BUBBELBAD, Cards.PIMPEL],
-            [
-                (players[2], Knowledge.TRUE),
-            ]
-        )
-
-        self.assertFalse(watson.check_knowledge())
-
-    def test_check_knowledge_card_amount(self):
-        watson = self.full_watson
-        game_state = watson.context
-        watson.get_knowledge_table().set_forcefully(game_state.players[0], Cards.PIMPEL, Knowledge.TRUE)
-        watson.get_knowledge_table().set_forcefully(game_state.players[1], Cards.PIMPEL, Knowledge.FALSE)
-        self.assertFalse(watson.check_knowledge())
-
     def test_has_solution_trivial(self):
         watson = self.empty_watson
         self.assertTrue(watson.has_solution())   # Trivial

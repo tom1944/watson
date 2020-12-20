@@ -2,7 +2,7 @@ from itertools import combinations
 from typing import Dict, List
 
 from card import Category, Card
-from context import Context
+from check_knowledge import check_knowledge
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from player import Player
@@ -59,7 +59,7 @@ class BruteForcer:
         for hand in player_hand:
             player_hands[player] = list(hand)
             new_unknown_cards = [c for c in unknown_cards if c not in hand]
-            if self.smart_check_knowledge(player_hands, new_unknown_cards):
+            if check_knowledge(self.knowledge_table, self.session, player_hands):
                 if player_index == len(self.context.players) - 1:
                     return True
                 elif self._has_solution(player_hands, new_unknown_cards, available_cards, cards_owned,
@@ -68,33 +68,6 @@ class BruteForcer:
                 else:
                     player_hands[self.context.players[player_index + 1]] = []
         return False
-
-    def smart_check_knowledge(self, player_hands: Dict[Player, List[Card]], unknown_cards: List[Card]):
-        already_owned = {}
-        for player in self.context.players:
-            already_owned[player] = []
-            for card in self.context.cards:
-                if self.knowledge_table.get(player, card) == Knowledge.TRUE:
-                    already_owned[player].append(card)
-            if len(player_hands[player]+already_owned[player]) > player.cardAmount:
-                return False
-
-        for rumour in self.session.rumours:
-            rumour_cards = rumour.rumour_cards
-            for replier, knowledge in rumour.replies:
-                possible_no_possession = set(rumour_cards).isdisjoint(player_hands[replier]+already_owned[replier])
-                if knowledge == Knowledge.FALSE:
-                    # Replier should not have any of the rumoured cards
-                    if not possible_no_possession:
-                        return False
-                else:
-                    # Replier should have any of the rumoured cards
-                    if replier.cardAmount == len(player_hands[replier]+already_owned[replier])\
-                            and possible_no_possession:
-                        return False
-                    if set(rumour_cards).isdisjoint(unknown_cards) and possible_no_possession:
-                        return False
-        return True
 
     def basic_brute_force(self):
         # Brute force the knowledge table on the rumours
