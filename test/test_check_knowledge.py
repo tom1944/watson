@@ -10,7 +10,7 @@ from test.fixture.context import context, Cards, tom, menno, michiel
 
 class TestCheckKnowledge(unittest.TestCase):
     def setUp(self) -> None:
-        self.empty_session = Session(context, {}, [])
+        self.empty_session = Session(context)
 
         knowledge_table = KnowledgeTable(context.players, context.cards)
         knowledge_table.set(tom, Cards.MES, Knowledge.TRUE)

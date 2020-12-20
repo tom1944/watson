@@ -11,10 +11,10 @@ class Session:
     cards_seen: Dict[Player, List[Card]]
     rumours: List[Rumour]
 
-    def __init__(self, context: Context, cards_seen: Dict[Player, List[Card]], rumours: List[Rumour]):
+    def __init__(self, context: Context):
         self.context = context
-        self.cards_seen = cards_seen
-        self.rumours = rumours
+        self.cards_seen = {p: [] for p in context.players}
+        self.rumours = []
 
     def get_cards(self, player: Player):
         return self.cards_seen[player]

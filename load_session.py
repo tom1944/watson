@@ -10,7 +10,7 @@ from rumour import Rumour
 from session import Session
 
 
-def load_session(filename: str) -> (Context, Session):
+def load_session(filename: str) -> Session:
     with open(filename, 'r') as file:
         config = json.load(file)
 
@@ -30,7 +30,23 @@ def load_session(filename: str) -> (Context, Session):
 
     cards_seen = retrieve_cards_seen(all_cards, cards_seen_json, players)
     rumours = retrieve_rumours(players, rumours_json, used_cards)
-    return Session(Context(players, used_cards), cards_seen, rumours)
+    session = Session(Context(players, used_cards))
+
+    add_cards_to_session(cards_seen, session)
+    add_rumours_to_session(rumours, session)
+
+    return session
+
+
+def add_cards_to_session(cards_seen: Dict[Player, List[Card]], session: Session):
+    for player, cards in cards_seen.items():
+        for c in cards:
+            session.add_card(c, player)
+
+
+def add_rumours_to_session(rumours: List[Rumour], session: Session):
+    for r in rumours:
+        session.add_rumour(r)
 
 
 def retrieve_rumours(players, rumours_json, used_cards) -> List[Rumour]:

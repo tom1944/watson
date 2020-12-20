@@ -4,20 +4,24 @@ from session import Session
 from test.fixture.context import Cards, context, tom, michiel, menno
 
 
+def make_session_fixture() -> Session:
+    session = Session(context)
+    cards_tom = [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL]
+
+    for c in cards_tom:
+        session.add_card(c, tom)
+
+    session.add_rumour(Rumour(
+        claimer=menno,
+        rumour_cards=[Cards.MES, Cards.HAL, Cards.PIMPEL],
+        replies=[
+            (tom, Knowledge.TRUE),
+            (michiel, Knowledge.FALSE)
+        ]
+    ))
+
+    return session
+
+
 class ExpectedSession:
-    session = Session(
-        context=context,
-        cards_seen={
-            tom: [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL],
-            menno: [],
-            michiel: []
-        },
-        rumours=[Rumour(
-            claimer=menno,
-            rumour_cards=[Cards.MES, Cards.HAL, Cards.PIMPEL],
-            replies=[
-                (tom, Knowledge.TRUE),
-                (michiel, Knowledge.FALSE)
-            ]
-        )]
-    )
+    session = make_session_fixture()
