@@ -1,5 +1,5 @@
 from itertools import combinations
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
 from card import Category, Card
 from check_knowledge import check_knowledge
@@ -25,13 +25,11 @@ class BruteForcer:
 
     def has_solution(self) -> bool:
         unknown_cards = [c for c in self.context.cards if c not in self.known_cards()]
-        available_cards = {}
-        cards_owned = {}
-        player_hands = {}
+        available_cards = {p: [] for p in self.context.players}
+        player_hands = {p: [] for p in self.context.players}
+        cards_owned = {p: 0 for p in self.context.players}
+
         for player in self.context.players:
-            available_cards[player] = []
-            player_hands[player] = []
-            cards_owned[player] = 0
             for card in self.context.cards:
                 if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                     available_cards[player].append(card)
@@ -87,3 +85,33 @@ class BruteForcer:
                         self.knowledge_table.set(player, card, Knowledge.TRUE)
                     else:
                         self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+
+    # Methods below are outdated but kept for reference to improve their new version
+    def old_has_solution(self) -> bool:
+        return self.has_solution()
+        # Brute forces knowledge tables and checks the solution with the rumours, edits tables upon findings
+        next_maybe = self.find_maybe()
+        if next_maybe is None:  # Check the final solution
+            return self.check_knowledge()
+
+        category, player, card = next_maybe
+        self.knowledge_table.set(player, card, Knowledge.TRUE)  # Try true
+        if self.check_knowledge():
+            if self.old_has_solution():
+                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
+                return True
+
+        self.knowledge_table.set(player, card, Knowledge.FALSE)  # Try false
+        if self.check_knowledge():
+            if self.old_has_solution():
+                self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
+                return True
+        self.knowledge_table.set(player, card, Knowledge.MAYBE)  # Reset
+        return False
+
+    def find_maybe(self) -> Optional[Tuple[Category, Player, Card]]:
+        for player in self.context.players:
+            for card in self.context.cards:
+                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
+                    return card.category, player, card
+        return None

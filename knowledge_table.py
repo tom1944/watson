@@ -43,19 +43,19 @@ class KnowledgeTable:
 
         for card in self.cards:
             all_false = True
-
+            maybe_found = False
             for player in self.players:
                 knowledge = self.get(player, card)
                 if knowledge == Knowledge.TRUE:
                     player_hands[player].append(card)
                     all_false = False
-                    break
                 elif knowledge == Knowledge.MAYBE:
-                    free_cards.append(card)
                     all_false = False
-                    break
+                    maybe_found = True
 
             if all_false:
                 murderer_cards.append(card)
+            elif maybe_found:
+                free_cards.append(card)
 
         return player_hands, murderer_cards, free_cards
