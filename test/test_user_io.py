@@ -10,35 +10,31 @@ from watson import Watson
 
 
 class TestUserIO(TestCase):
+    def setUp(self):
+        self.session = ExpectedSession.session
+        self.watson = Watson(self.session)
+        self.shell = WatsonShell(self.watson)
+
     def test_do_card(self):
-        session = ExpectedSession.session
-        watson = Watson(session)
-        shell = WatsonShell(watson)
-        shell.onecmd("card Tom Roodhart")
-        self.assertEqual(watson.get_knowledge_table().get(session.get_context().players[0], Cards.ROODHART),
+        self.shell.onecmd("card Tom Roodhart")
+        knowledge_table = self.watson.get_knowledge_table()
+        self.assertEqual(knowledge_table.get(self.session.get_context().players[0], Cards.ROODHART),
                          Knowledge.TRUE)
-        for i in range(len(watson.context.players)):
+        for i in range(len(self.session.get_context().players)):
             if i > 0:
                 self.assertEqual(
-                    watson.get_knowledge_table().get(session.get_context().players[i], Cards.ROODHART),
+                    knowledge_table.get(self.session.get_context().players[i], Cards.ROODHART),
                     Knowledge.FALSE)
 
-    reply_string1 = "Tom n"
-    reply_string2 = "Michiel y"
-    end_string = "done"
-
-    @patch('builtins.input', side_effect=[reply_string1, reply_string2, end_string])
+    @patch('builtins.input', side_effect=["Tom n", "Michiel y", "done"])
     def test_do_rumour(self, mock_inputs):
-        session = ExpectedSession.session
-        watson = Watson(session)
-        shell = WatsonShell(watson)
-        shell.onecmd("r Menno rood bijl eetkamer")
-        rumour = watson.session.rumours[1]
+        self.shell.onecmd("r Menno rood bijl eetkamer")
+        rumour = self.session.get_rumours()[-1]
         replies = rumour.replies
         self.assertEqual(set(rumour.rumour_cards), {Cards.ROODHART, Cards.BIJL, Cards.EETKAMER})
-        self.assertEqual(rumour.claimer, watson.context.players[1])
-        self.assertEqual(replies[0], (watson.context.players[0], Knowledge.FALSE))
-        self.assertEqual(replies[1], (watson.context.players[2], Knowledge.TRUE))
+        self.assertEqual(rumour.claimer, self.watson.context.players[1])
+        self.assertEqual(replies[0], (self.watson.context.players[0], Knowledge.FALSE))
+        self.assertEqual(replies[1], (self.watson.context.players[2], Knowledge.TRUE))
 
     def test_match_input_string_from_set(self):
         result = user_io.match_input_string_from_set("hon", ["bak", "gast", "matig"])

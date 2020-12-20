@@ -2,15 +2,13 @@ from unittest import TestCase
 
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
-from test.fixture.context import Cards
-from test.fixture.session import ExpectedSession
+from test.fixture.context import Cards, context, tom
 
 
 class TestKnowledgeTable(TestCase):
     def setUp(self):
-        session = ExpectedSession.session
-        self.context = session.get_context()
-        self.some_player = self.context.players[0]
+        self.context = context
+        self.some_player = tom
         self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
 
     def test_new_knowledge_table(self):
