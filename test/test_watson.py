@@ -4,8 +4,7 @@ from knowledge import Knowledge
 from rumour import Rumour
 from session import Session
 
-from test.fixture.context import Cards, michiel, menno, context_fixture
-from test.fixture.session import ExpectedSession
+from test.fixture.context import Cards, michiel, menno, context_fixture, tom
 from watson import Watson
 
 
@@ -15,60 +14,13 @@ class TestWatson(TestCase):
         session = Session(context)
         self.empty_watson = Watson(session)
 
-        small_watson = Watson(session)
-        players = context.players
-        knowledge_table = small_watson.get_knowledge_table()
-        knowledge_table.set(players[0], Cards.MES, Knowledge.TRUE)
-        knowledge_table.set(players[1], Cards.MES, Knowledge.FALSE)
-        knowledge_table.set(players[2], Cards.MES, Knowledge.FALSE)
-
-        knowledge_table.set(players[0], Cards.BUBBELBAD, Knowledge.FALSE)
-        knowledge_table.set(players[1], Cards.BUBBELBAD, Knowledge.TRUE)
-        knowledge_table.set(players[2], Cards.BUBBELBAD, Knowledge.FALSE)
-
-        knowledge_table.set(players[2], Cards.PIMPEL, Knowledge.FALSE)
-
-        self.small_watson = small_watson
-
-        self.full_watson = self.create_full_watson()
-
-    def create_full_watson(self) -> Watson:
-        session = ExpectedSession.session
-        context = session.get_context()
-        full_watson = Watson(session)
-
-        self.murderer = Cards.GROENEWOUD
-        self.murder_weapon = Cards.PISTOOL
-        self.murder_location = Cards.KEUKEN
-        self.murder_cards = [self.murderer, self.murder_weapon, self.murder_location]
-
-        player_hands = {
-            context.players[0]: [Cards.MES, Cards.KANDELAAR, Cards.WERKKAMER, Cards.THEATER, Cards.ZITKAMER,
-                                 Cards.DEWIT],
-            context.players[1]: [Cards.VERGIF, Cards.TOUW, Cards.KNUPPEL, Cards.BUBBELBAD, Cards.GASTENVERBLIJF,
-                                 Cards.PIMPEL],
-            context.players[2]: [Cards.BIJL, Cards.HALTER, Cards.EETKAMER, Cards.BLAAUWVANDRAET,
-                                 Cards.ROODHART]
-        }
-
-        for card in context.cards:
-            for player in context.players:
-                full_watson.get_knowledge_table().set(player, card, Knowledge.FALSE)
-
-        for player, cards in player_hands.items():
-            for card in cards:
-                full_watson.get_knowledge_table().set_forcefully(player, card, Knowledge.TRUE)
-
-        return full_watson
-
     def test_add_card(self):
         watson = self.empty_watson
-        game_state = watson.context
-        watson.add_knowledge(game_state.players[0], Cards.KNUPPEL, Knowledge.TRUE)
+        watson.add_knowledge(tom, Cards.KNUPPEL, Knowledge.TRUE)
 
-        for player in game_state.players:
+        for player in watson.context.players:
             knowledge = watson.get_knowledge_table().get(player, Cards.KNUPPEL)
-            if player == game_state.players[0]:
+            if player == tom:
                 self.assertEqual(knowledge, Knowledge.TRUE)
             else:
                 self.assertEqual(knowledge, Knowledge.FALSE)
@@ -79,15 +31,13 @@ class TestWatson(TestCase):
         watson.knowledge_table.set(michiel, Cards.KANDELAAR, Knowledge.FALSE)
         watson.knowledge_table.set(michiel, Cards.HAL, Knowledge.FALSE)
 
-        test_rumour = Rumour(
-            menno,
-            [Cards.KANDELAAR, Cards.HAL, Cards.ROODHART],
-            [
-                (michiel, Knowledge.TRUE)
-            ]
+        watson.add_rumour(
+            Rumour(
+                menno,
+                [Cards.KANDELAAR, Cards.HAL, Cards.ROODHART],
+                [(michiel, Knowledge.TRUE)]
+            )
         )
-
-        watson.add_rumour(test_rumour)
         self.assertEqual(
             Knowledge.TRUE,
             watson.knowledge_table.get(michiel, Cards.ROODHART)
