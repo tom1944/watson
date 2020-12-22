@@ -1,7 +1,7 @@
-from card import Category
-from knowledge import Knowledge
-from knowledge_table import KnowledgeTable
-from table_formatter import TableFormatter
+from source.data.card import Category
+from source.data.knowledge import Knowledge
+from source.data.knowledge_table import KnowledgeTable
+from source.io.table_formatter import TableFormatter
 
 
 def knowledge_to_str(knowledge: Knowledge) -> str:

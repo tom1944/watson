@@ -1,10 +1,10 @@
 from unittest import TestCase, skip
 
-from knowledge import Knowledge
-from rumour import Rumour
-from session import Session
+from source.data.knowledge import Knowledge
+from source.data.rumour import Rumour
+from source.data.session import Session
 from test.fixture.context import Cards, michiel, menno, context_fixture, tom
-from watson import Watson
+from source.logic.watson import Watson
 
 
 class TestWatson(TestCase):

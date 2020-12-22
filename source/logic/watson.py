@@ -1,10 +1,10 @@
-from brute_forcer import BruteForcer
-from card import Card
-from knowledge import Knowledge
-from knowledge_table import KnowledgeTable
-from player import Player
-from rumour import Rumour
-from session import Session
+from source.logic.brute_forcer import BruteForcer
+from source.data.card import Card
+from source.data.knowledge import Knowledge
+from source.data.knowledge_table import KnowledgeTable
+from source.data.player import Player
+from source.data.rumour import Rumour
+from source.data.session import Session
 
 
 class Watson:

@@ -1,6 +1,6 @@
-from knowledge import Knowledge
-from rumour import Rumour
-from session import Session
+from source.data.knowledge import Knowledge
+from source.data.rumour import Rumour
+from source.data.session import Session
 from test.fixture.context import Cards, context_fixture, tom, michiel, menno
 
 

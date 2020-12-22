@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from knowledge import Knowledge
-from knowledge_table import KnowledgeTable
+from source.data.knowledge import Knowledge
+from source.data.knowledge_table import KnowledgeTable
 from test.fixture.context import Cards, context_fixture, tom
 
 

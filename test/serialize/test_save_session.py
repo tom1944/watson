@@ -1,8 +1,8 @@
 import os
 import unittest
 
-from serialize.load_session import load_session
-from serialize.save_session import save_session
+from source.serialize.load_session import load_session
+from source.serialize.save_session import save_session
 from test.fixture.session import ExpectedSession
 
 

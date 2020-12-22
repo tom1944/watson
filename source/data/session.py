@@ -1,9 +1,9 @@
 from typing import Dict, List
 
-from card import Card
-from context import Context
-from player import Player
-from rumour import Rumour
+from source.data.card import Card
+from source.data.context import Context
+from source.data.player import Player
+from source.data.rumour import Rumour
 
 
 class Session:

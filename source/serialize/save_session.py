@@ -1,8 +1,8 @@
 import json
 
-from card import Category
-from knowledge import Knowledge
-from session import Session
+from source.data.card import Category
+from source.data.knowledge import Knowledge
+from source.data.session import Session
 
 
 def save_session(session: Session, filename: str):

@@ -1,10 +1,10 @@
 from typing import List, Dict
 
-from card import Card
-from knowledge import Knowledge
-from knowledge_table import KnowledgeTable
-from player import Player
-from session import Session
+from source.data.card import Card
+from source.data.knowledge import Knowledge
+from source.data.knowledge_table import KnowledgeTable
+from source.data.player import Player
+from source.data.session import Session
 
 
 # assumes new_player_hands only contains free cards

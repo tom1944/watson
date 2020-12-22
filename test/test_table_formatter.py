@@ -1,6 +1,6 @@
 import unittest
 
-from table_formatter import TableFormatter
+from source.io.table_formatter import TableFormatter
 
 
 class TestTableFormatter(unittest.TestCase):

@@ -1,12 +1,12 @@
 import json
 from typing import List, Dict
 
-from card import Card, Category, cat_from_string
-from context import Context
-from knowledge import Knowledge
-from player import Player
-from rumour import Rumour
-from session import Session
+from source.data.card import Card, Category, cat_from_string
+from source.data.context import Context
+from source.data.knowledge import Knowledge
+from source.data.player import Player
+from source.data.rumour import Rumour
+from source.data.session import Session
 
 
 def load_session(filename: str) -> Session:

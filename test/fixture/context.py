@@ -1,8 +1,8 @@
 from typing import List
 
-from card import Card, Category
-from context import Context
-from player import Player
+from source.data.card import Card, Category
+from source.data.context import Context
+from source.data.player import Player
 
 
 class Cards:

@@ -1,12 +1,12 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-import user_io
-from knowledge import Knowledge
+from source.io import user_io
+from source.data.knowledge import Knowledge
 from test.fixture.context import Cards
 from test.fixture.session import ExpectedSession
-from user_io import WatsonShell
-from watson import Watson
+from source.io.user_io import WatsonShell
+from source.logic.watson import Watson
 
 
 class TestUserIO(TestCase):

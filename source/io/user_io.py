@@ -1,10 +1,11 @@
 from cmd import Cmd
 from typing import List, Optional, Tuple
 
-from card import Card, Category
-from knowledge import Knowledge
-from rumour import Rumour
-from watson import Player, Watson
+from source.data.card import Card, Category
+from source.data.knowledge import Knowledge
+from source.data.rumour import Rumour
+from source.data.player import Player
+from source.logic.watson import Watson
 
 
 class WatsonShell(Cmd):

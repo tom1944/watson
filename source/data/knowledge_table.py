@@ -1,8 +1,8 @@
 from typing import Tuple, List, Dict
 
-from card import Category, Card
-from knowledge import Knowledge
-from player import Player
+from source.data.card import Category, Card
+from source.data.knowledge import Knowledge
+from source.data.player import Player
 
 
 class KnowledgeTable:

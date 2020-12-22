@@ -1,10 +1,10 @@
 import unittest
 
-from check_knowledge import check_knowledge
-from knowledge import Knowledge
-from knowledge_table import KnowledgeTable
-from rumour import Rumour
-from session import Session
+from source.logic.check_knowledge import check_knowledge
+from source.data.knowledge import Knowledge
+from source.data.knowledge_table import KnowledgeTable
+from source.data.rumour import Rumour
+from source.data.session import Session
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 

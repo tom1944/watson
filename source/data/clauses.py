@@ -1,9 +1,8 @@
 from typing import Dict, List
 
-from card import Card
-from context import Context
-from knowledge import Knowledge
-from player import Player
+from source.data.card import Card
+from source.data.context import Context
+from source.data.player import Player
 
 Clause = List[Card]
 
