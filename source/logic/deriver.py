@@ -43,8 +43,8 @@ class Deriver:
                 clause.append(card)
         return clause
 
-    def derive_from_new_knowledge(self, player: Player, card: Card):
-        knowledge = self.knowledge_table.get(player, card)
+    def derive_from_new_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
+        self.knowledge_table.set(player, card, knowledge)
 
         if knowledge == Knowledge.TRUE:
             self.derive_new_true_knowledge(player, card)

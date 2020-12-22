@@ -27,10 +27,8 @@ class TestDeriver(unittest.TestCase):
                 ]
             )
         )
-        knowledge_table.set(menno, Cards.KANDELAAR, Knowledge.FALSE)
-        knowledge_table.set(menno, Cards.BUBBELBAD, Knowledge.FALSE)
-        deriver.derive_from_new_knowledge(menno, Cards.KANDELAAR)
-        deriver.derive_from_new_knowledge(menno, Cards.BUBBELBAD)
+        deriver.derive_from_new_knowledge(menno, Cards.KANDELAAR, Knowledge.FALSE)
+        deriver.derive_from_new_knowledge(menno, Cards.BUBBELBAD, Knowledge.FALSE)
         deriver.inspect_clauses()
         self.assertEqual(Knowledge.TRUE, knowledge_table.get(menno, Cards.DEWIT))
 

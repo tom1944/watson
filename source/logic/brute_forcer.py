@@ -67,24 +67,37 @@ class BruteForcer:
                     player_hands[self.context.players[player_index + 1]] = []
         return False
 
-    def basic_brute_force(self):
-        # Brute force the knowledge table on the rumours
+    def brute_force_generator(self):
         for player in self.context.players:
             for card in self.context.cards:
                 if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
+                    knowledge = self.brute_force_on_card(player, card)
+                    yield player, card, knowledge
 
-                    self.knowledge_table.set(player, card, Knowledge.TRUE)  # Try to fill in true
-                    if not self.has_solution():
-                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
-                        self.knowledge_table.set(player, card, Knowledge.FALSE)
-                        continue
+    def brute_force_on_card(self, player: Player, card: Card) -> Knowledge:
+        if self.must_be_true(player, card):
+            return Knowledge.TRUE
+        if self.must_be_false(player, card):
+            return Knowledge.FALSE
+        return Knowledge.MAYBE
 
-                    self.knowledge_table.set(player, card, Knowledge.FALSE)  # Try to fill in false
-                    if not self.has_solution():
-                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
-                        self.knowledge_table.set(player, card, Knowledge.TRUE)
-                    else:
-                        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+    def must_be_true(self, player: Player, card: Card) -> bool:
+        self.knowledge_table.set(player, card, Knowledge.FALSE)
+        possible_solution = self.has_solution()
+        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+        if possible_solution is None:
+            return True
+        else:
+            return False
+
+    def must_be_false(self, player: Player, card: Card) -> bool:
+        self.knowledge_table.set(player, card, Knowledge.TRUE)
+        possible_solution = self.has_solution()
+        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+        if possible_solution is None:
+            return True
+        else:
+            return False
 
     # Methods below are outdated but kept for reference to improve their new version
     def old_has_solution(self) -> bool:

@@ -1,9 +1,10 @@
 from unittest import TestCase
 from unittest.mock import patch
 
+from source.data.session import Session
 from source.io import user_io
 from source.data.knowledge import Knowledge
-from test.fixture.context import Cards
+from test.fixture.context import Cards, context_fixture
 from test.fixture.session import ExpectedSession
 from source.io.user_io import WatsonShell
 from source.logic.watson import Watson
@@ -11,7 +12,7 @@ from source.logic.watson import Watson
 
 class TestUserIO(TestCase):
     def setUp(self):
-        self.session = ExpectedSession.session
+        self.session = Session(context_fixture)
         self.watson = Watson(self.session)
         self.shell = WatsonShell(self.watson)
 
@@ -29,7 +30,7 @@ class TestUserIO(TestCase):
     @patch('builtins.input', side_effect=["Tom n", "Michiel y", "done"])
     def test_do_rumour(self, mock_inputs):
         self.shell.onecmd("r Menno rood bijl eetkamer")
-        rumour = self.session.get_rumours()[-1]
+        rumour = self.session.get_rumours()[0]
         replies = rumour.replies
         self.assertEqual(set(rumour.rumour_cards), {Cards.ROODHART, Cards.BIJL, Cards.EETKAMER})
         self.assertEqual(rumour.claimer, self.watson.context.players[1])
@@ -45,4 +46,3 @@ class TestUserIO(TestCase):
         self.assertEqual("hond", result)
         result = user_io.match_input_string_from_set("hon", ["hond", "honden", "matig"])
         self.assertEqual(None, result)
-

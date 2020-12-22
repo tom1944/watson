@@ -24,7 +24,6 @@ class TestWatson(TestCase):
             else:
                 self.assertEqual(knowledge, Knowledge.FALSE)
 
-    @skip
     def test_add_rumour(self):
         watson = self.empty_watson
 
