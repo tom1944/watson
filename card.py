@@ -1,5 +1,5 @@
-from typing import NamedTuple
 from enum import Enum
+from typing import NamedTuple
 
 
 class Category(Enum):

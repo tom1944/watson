@@ -1,7 +1,6 @@
 import json
 
 from card import Category
-from context import Context
 from knowledge import Knowledge
 from session import Session
 

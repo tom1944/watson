@@ -1,13 +1,8 @@
-from itertools import combinations
-from typing import List, Tuple, Optional, Dict
-
 from brute_forcer import BruteForcer
-from context import Context
+from card import Card
 from knowledge import Knowledge
 from knowledge_table import KnowledgeTable
 from player import Player
-from card import Card
-from card import Category
 from rumour import Rumour
 from session import Session
 

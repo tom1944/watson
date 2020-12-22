@@ -1,11 +1,10 @@
 import json
+from typing import List, Dict
 
+from card import Card, Category, cat_from_string
 from context import Context
 from knowledge import Knowledge
 from player import Player
-from card import Card, Category, cat_from_string
-from typing import List, Dict
-
 from rumour import Rumour
 from session import Session
 

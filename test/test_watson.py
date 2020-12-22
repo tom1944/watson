@@ -3,7 +3,6 @@ from unittest import TestCase
 from knowledge import Knowledge
 from rumour import Rumour
 from session import Session
-
 from test.fixture.context import Cards, michiel, menno, context_fixture, tom
 from watson import Watson
 
