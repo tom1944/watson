@@ -5,7 +5,7 @@ from knowledge import Knowledge
 from session import Session
 
 
-def serialize(session: Session, filename: str):
+def save_session(session: Session, filename: str):
     context = session.context
     config = {}
     config["players"] = []
