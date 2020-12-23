@@ -39,17 +39,15 @@ class Deriver:
         for card in rumour_cards:
             if self.knowledge_table.get(player, card) == Knowledge.TRUE:
                 return []
-            elif self.knowledge_table.get(player,card) == Knowledge.MAYBE:
+            elif self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                 clause.append(card)
         return clause
 
     def derive_from_new_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
-        self.knowledge_table.set(player, card, knowledge)
-
         if knowledge == Knowledge.TRUE:
-            self.derive_new_true_knowledge(player, card)
+            self.set_and_derive_true_knowledge_if_new(player, card)
         elif knowledge == Knowledge.FALSE:
-            self.derive_new_false_knowledge(player, card)
+            self.set_and_derive_false_knowledge_if_new(player, card)
         else:
             raise DeriveCalledOnMaybeError("Value in knowledge table was Knowledge.Maybe")
         self.inspect_clauses()
@@ -73,7 +71,7 @@ class Deriver:
 
         # Max cards: A player cannot have more cards than he has
         if self.nr_known_cards(player) == player.cardAmount:
-            self.set_other_cards_to_false(player)
+            self.set_maybe_knowledge_to_false(player)
 
     def nr_known_cards(self, player) -> int:
         card_count = 0
@@ -82,7 +80,7 @@ class Deriver:
                 card_count += 1
         return card_count
 
-    def set_other_cards_to_false(self, player):
+    def set_maybe_knowledge_to_false(self, player):
         for card in self.context.cards:
             if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
                 self.set_and_derive_false_knowledge_if_new(player, card)

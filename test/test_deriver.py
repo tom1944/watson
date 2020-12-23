@@ -168,7 +168,7 @@ class TestDeriver(unittest.TestCase):
         self.assertEqual(2, self.empty_deriver.nr_known_cards(tom))
 
     def test_set_other_cards_to_false_with_only_maybe(self):
-        self.empty_deriver.set_other_cards_to_false(menno)
+        self.empty_deriver.set_maybe_knowledge_to_false(menno)
         for card in self.empty_deriver.context.cards:
             self.assertEqual(Knowledge.FALSE, self.empty_deriver.knowledge_table.get(menno, card))
 
@@ -177,7 +177,7 @@ class TestDeriver(unittest.TestCase):
         knowledge_table = self.empty_knowledge_table
         knowledge_table.set(michiel, Cards.MES, Knowledge.TRUE)
         knowledge_table.set(michiel, Cards.BIJL, Knowledge.TRUE)
-        deriver.set_other_cards_to_false(michiel)
+        deriver.set_maybe_knowledge_to_false(michiel)
         for card in deriver.context.cards:
             if card == Cards.BIJL or card == Cards.MES:
                 self.assertEqual(Knowledge.TRUE, deriver.knowledge_table.get(michiel, card))
