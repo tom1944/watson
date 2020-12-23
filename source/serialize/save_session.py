@@ -11,8 +11,8 @@ from source.data.session import Session
 def save_session(session: Session, filename: str):
     context = session.context
     config = {
-        "players": players_to_json_object(context.players),
-        "cards": cards_to_json_object(context.cards),
+        "players": players_of_context_to_json_object(context.players),
+        "cards": cards_of_context_to_json_object(context.cards),
         "open_cards": [],
         "cards_seen": cards_seen_to_json_object(session.cards_seen),
         "rumours_made": rumours_to_json_object(session.get_rumours())
@@ -22,14 +22,14 @@ def save_session(session: Session, filename: str):
         json.dump(config, outfile, indent=4)
 
 
-def players_to_json_object(players: List[Player]):
+def players_of_context_to_json_object(players: List[Player]):
     return [
         player_to_json_object(player)
         for player in players
     ]
 
 
-def player_to_json_object(player):
+def player_to_json_object(player: Player):
     return {
         "name": player.name,
         "character": player.character,
@@ -37,12 +37,20 @@ def player_to_json_object(player):
     }
 
 
-def cards_to_json_object(cards: List[Card]):
+def cards_of_context_to_json_object(context_cards: List[Card]):
+    weapon_cards = [c for c in context_cards if c.category == Category.WEAPON]
+    room_cards = [c for c in context_cards if c.category == Category.ROOM]
+    character_cards = [c for c in context_cards if c.category == Category.CHARACTER]
+
     return {
-        "Weapon": [c.name for c in cards if c.category == Category.WEAPON],
-        "Room": [c.name for c in cards if c.category == Category.ROOM],
-        "Character": [c.name for c in cards if c.category == Category.CHARACTER]
+        "Weapon": cards_to_json_object(weapon_cards),
+        "Room": cards_to_json_object(room_cards),
+        "Character": cards_to_json_object(character_cards),
     }
+
+
+def cards_to_json_object(cards: List[Card]):
+    return [card.name for card in cards]
 
 
 def cards_seen_to_json_object(cards_seen: Dict[Player, List[Card]]):
