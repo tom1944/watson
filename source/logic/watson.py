@@ -19,18 +19,20 @@ class Watson:
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
         self.session.add_card(card, player)
         self.deriver.derive_from_new_knowledge(player, card, knowledge)
-        self.brute_force()
+        self.brute_force_and_derive_from_findings()
 
     def add_rumour(self, rumour: Rumour) -> None:
         self.session.add_rumour(rumour)
         self.deriver.derive_from_new_rumour(rumour)
-        self.brute_force()
+        self.brute_force_and_derive_from_findings()
 
-    def brute_force(self):
-        for player, card, knowledge in self.brute_forcer.brute_force_generator():
-            if knowledge != Knowledge.MAYBE:
-                self.knowledge_table.set(player, card, knowledge)
-                self.deriver.derive_from_new_knowledge(player, card, knowledge)
+    def brute_force_and_derive_from_findings(self):
+        for player in self.context.players:
+            for card in self.context.cards:
+                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
+                    knowledge = self.brute_forcer.brute_force_on_card(player, card)
+                    if knowledge != Knowledge.MAYBE:
+                        self.deriver.derive_from_new_knowledge(player, card, knowledge)
 
     def get_knowledge_table(self) -> KnowledgeTable:
         return self.knowledge_table

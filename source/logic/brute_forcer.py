@@ -67,13 +67,6 @@ class BruteForcer:
                     player_hands[self.context.players[player_index + 1]] = []
         return False
 
-    def brute_force_generator(self):
-        for player in self.context.players:
-            for card in self.context.cards:
-                if self.knowledge_table.get(player, card) == Knowledge.MAYBE:
-                    knowledge = self.brute_force_on_card(player, card)
-                    yield player, card, knowledge
-
     def brute_force_on_card(self, player: Player, card: Card) -> Knowledge:
         if self.must_be_true(player, card):
             return Knowledge.TRUE
