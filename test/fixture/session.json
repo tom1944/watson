@@ -4,29 +4,55 @@
       "name": "Tom",
       "character": "Roodhart",
       "card_amount": 6
-    },{
+    },
+    {
       "name": "Menno",
       "character": "Blaauw van Draet",
       "card_amount": 6
-    },{
+    },
+    {
       "name": "Michiel",
       "character": "De Wit",
       "card_amount": 6
     }
   ],
-
   "cards": {
-    "Weapon": ["Mes", "Kandelaar", "Pistool", "Vergif", "Troffee", "Touw", "Knuppel", "Bijl", "Halter"],
-    "Room": ["Hal", "Eetkamer", "Keuken", "Terras", "Werkkamer", "Theater", "Zitkamer", "Bubbelbad", "Gastenverblijf"],
-    "Character": ["Van Geelen", "Pimpel", "Groenewoud", "Blaauw van Draet", "Roodhart", "De Wit"]
+    "Weapon": [
+      "Bijl",
+      "Halter",
+      "Kandelaar",
+      "Knuppel",
+      "Mes",
+      "Pistool",
+      "Touw",
+      "Troffee",
+      "Vergif"
+    ],
+    "Room": [
+      "Bubbelbad",
+      "Eetkamer",
+      "Gastenverblijf",
+      "Hal",
+      "Keuken",
+      "Terras",
+      "Theater",
+      "Werkkamer",
+      "Zitkamer"
+    ],
+    "Character": [
+      "Blaauw van Draet",
+      "De Wit",
+      "Groenewoud",
+      "Pimpel",
+      "Roodhart",
+      "Van Geelen"
+    ]
   },
-
   "open_cards": [
-    "Troffee",
     "Terras",
+    "Troffee",
     "Van Geelen"
   ],
-
   "cards_seen": {
     "Tom": [
       "Roodhart",
@@ -38,13 +64,20 @@
     "Menno": [],
     "Michiel": []
   },
-
   "rumours_made": [
     {
       "claimer": "Menno",
-      "cards": ["Mes", "Hal", "Pimpel"],
-      "replied_yes": ["Tom"],
-      "replied_no": ["Michiel"]
+      "cards": [
+        "Mes",
+        "Hal",
+        "Pimpel"
+      ],
+      "replied_yes": [
+        "Tom"
+      ],
+      "replied_no": [
+        "Michiel"
+      ]
     }
   ]
 }

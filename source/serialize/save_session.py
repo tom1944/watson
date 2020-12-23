@@ -8,18 +8,22 @@ from source.data.rumour import Rumour
 from source.data.session import Session
 
 
-def save_session(session: Session, filename: str):
+def save_session_to_file(session: Session, file_path: str):
+    with open(file_path, 'w') as file:
+        save_session_to_file_object(session, file)
+
+
+def save_session_to_file_object(session: Session, file_object):
     context = session.context
     config = {
         "players": players_of_context_to_json_object(context.players),
-        "cards": cards_of_context_to_json_object(context.cards),
-        "open_cards": [],
+        "cards": cards_of_context_to_json_object(context.cards + context.open_cards),
+        "open_cards": cards_to_json_object(context.open_cards),
         "cards_seen": cards_seen_to_json_object(session.cards_seen),
         "rumours_made": rumours_to_json_object(session.get_rumours())
     }
 
-    with open(filename, 'w') as outfile:
-        json.dump(config, outfile, indent=4)
+    json.dump(config, file_object, indent=2)
 
 
 def players_of_context_to_json_object(players: List[Player]):
@@ -50,7 +54,8 @@ def cards_of_context_to_json_object(context_cards: List[Card]):
 
 
 def cards_to_json_object(cards: List[Card]):
-    return [card.name for card in cards]
+    card_names = [card.name for card in cards]
+    return sorted(card_names)
 
 
 def cards_seen_to_json_object(cards_seen: Dict[Player, List[Card]]):

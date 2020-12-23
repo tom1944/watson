@@ -4,6 +4,9 @@ from source.data.session import Session
 from test.fixture.context import Cards, context_fixture, tom, michiel, menno
 
 
+PATH_OF_SERIALIZED_SESSION_FIXTURE = 'test/fixture/session.json'
+
+
 def make_session_fixture() -> Session:
     session = Session(context_fixture)
     cards_tom = [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL]

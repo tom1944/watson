@@ -29,7 +29,7 @@ def load_session(filename: str) -> Session:
 
     cards_seen = retrieve_cards_seen(all_cards, cards_seen_json, players)
     rumours = retrieve_rumours(players, rumours_json, used_cards)
-    session = Session(Context(players, used_cards))
+    session = Session(Context(players, used_cards, open_cards))
 
     add_cards_to_session(cards_seen, session)
     add_rumours_to_session(rumours, session)
