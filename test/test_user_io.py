@@ -5,7 +5,6 @@ from source.data.session import Session
 from source.io import user_io
 from source.data.knowledge import Knowledge
 from test.fixture.context import Cards, context_fixture
-from test.fixture.session import ExpectedSession
 from source.io.user_io import WatsonShell
 from source.logic.watson import Watson
 
