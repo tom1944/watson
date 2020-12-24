@@ -1,46 +1,57 @@
 from unittest import TestCase
-from unittest.mock import patch
+from unittest.mock import patch, create_autospec, Mock
 
 from source.data.knowledge import Knowledge
+from source.data.rumour import Rumour
 from source.io import watson_shell
 from source.io.watson_shell import WatsonShell
 from source.logic.watson import Watson
-from test.fixture.context import Cards, context_fixture
+from test.fixture.context import Cards, context_fixture, tom, menno, michiel
 
 
 class TestWatsonShell(TestCase):
     def setUp(self):
-        self.watson = Watson(context_fixture)
-        self.shell = WatsonShell(self.watson)
-        self.session = self.watson.session
+        self.context = context_fixture
+        self.watson_mock = create_autospec(
+            Watson,
+            spec_set=True,
+            instance=True,
+        )
+        self.watson_mock.get_context = Mock(return_value=context_fixture)
+        self.shell = WatsonShell(self.watson_mock)
+
+    def test_get_context(self):
+        watson = Watson(self.context)
+        self.assertEqual(self.context, watson.get_context())
 
     def test_do_card(self):
         self.shell.onecmd("card Tom Roodhart")
-        knowledge_table = self.watson.get_knowledge_table()
-        self.assertEqual(knowledge_table.get(self.session.get_context().players[0], Cards.ROODHART),
-                         Knowledge.TRUE)
-        for i in range(len(self.session.get_context().players)):
-            if i > 0:
-                self.assertEqual(
-                    knowledge_table.get(self.session.get_context().players[i], Cards.ROODHART),
-                    Knowledge.FALSE)
+        self.watson_mock.add_knowledge.assert_called_with(tom, Cards.ROODHART, Knowledge.TRUE)
 
     @patch('builtins.input', side_effect=["Tom n", "Michiel y", "done"])
     def test_do_rumour(self, mock_inputs):
         self.shell.onecmd("r Menno rood bijl eetkamer")
-        rumour = self.session.get_rumours()[0]
-        replies = rumour.replies
-        self.assertEqual(set(rumour.rumour_cards), {Cards.ROODHART, Cards.BIJL, Cards.EETKAMER})
-        self.assertEqual(rumour.claimer, self.watson.context.players[1])
-        self.assertEqual(replies[0], (self.watson.context.players[0], Knowledge.FALSE))
-        self.assertEqual(replies[1], (self.watson.context.players[2], Knowledge.TRUE))
+
+        reference_rumour = Rumour(
+            menno,
+            [Cards.ROODHART, Cards.BIJL, Cards.EETKAMER],
+            replies=[
+                (tom, Knowledge.FALSE),
+                (michiel, Knowledge.TRUE),
+            ]
+        )
+
+        self.watson_mock.add_rumour.assert_called_with(reference_rumour)
 
     def test_match_input_string_from_set(self):
         result = watson_shell.match_input_string_from_set("hon", ["bak", "gast", "matig"])
         self.assertEqual(None, result)
+
         result = watson_shell.match_input_string_from_set("hon", ["hond", "gast", "matig"])
         self.assertEqual("hond", result)
+
         result = watson_shell.match_input_string_from_set("hond", ["hond", "honden", "matig"])
         self.assertEqual("hond", result)
+
         result = watson_shell.match_input_string_from_set("hon", ["hond", "honden", "matig"])
         self.assertEqual(None, result)
