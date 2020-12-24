@@ -17,6 +17,7 @@ def check_knowledge(knowledge_table: KnowledgeTable, session: Session,
     for player in players:
         if new_player_hands is not None:
             player_hands[player] += new_player_hands[player]
+            player_hands[player] = list(set(player_hands[player]))  # To get unique elements from list
             for card in new_player_hands[player]:
                 if card in free_cards:
                     free_cards.remove(card)
