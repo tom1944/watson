@@ -3,8 +3,8 @@ from typing import List, Optional, Tuple
 
 from source.data.card import Card, Category
 from source.data.knowledge import Knowledge
-from source.data.rumour import Rumour
 from source.data.player import Player
+from source.data.rumour import Rumour
 from source.logic.watson import Watson
 
 
@@ -12,6 +12,7 @@ class WatsonShell(Cmd):
     def __init__(self, watson: Watson, **kwargs):
         Cmd.__init__(self, **kwargs)
         self.watson = watson
+        self.context = watson.get_context()
         self.intro = "Welcome to Watson, the Cluedo assistant. Type help or ? to list commands.\n"
         self.prompt = ">>> "
 
@@ -25,8 +26,8 @@ class WatsonShell(Cmd):
 
         owner_name, card_name = args
 
-        card = match_card(card_name, self.watson.context.cards)
-        owner = match_player(owner_name, self.watson.context.players)
+        card = match_card(card_name, self.context.cards)
+        owner = match_player(owner_name, self.context.players)
 
         if not card or not owner:
             return False
@@ -47,8 +48,8 @@ class WatsonShell(Cmd):
 
         claimer_name = args[0]
         card_names = args[1:]
-        rumour_cards = [match_card(card_name, self.watson.context.cards) for card_name in card_names]
-        claimer = match_player(claimer_name, self.watson.context.players)
+        rumour_cards = [match_card(card_name, self.context.cards) for card_name in card_names]
+        claimer = match_player(claimer_name, self.context.players)
 
         if not all(rumour_cards) or not claimer:
             return False
@@ -79,7 +80,7 @@ class WatsonShell(Cmd):
             if len(response) != 2:
                 print("Usage: <Player> <y|n>")
                 continue
-            player = match_player(response[0], self.watson.context.players)
+            player = match_player(response[0], self.context.players)
             if response[1] == "y":
                 knowledge = Knowledge.TRUE
             elif response[1] == "n":

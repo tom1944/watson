@@ -1,3 +1,4 @@
+from source.data.context import Context
 from source.logic.brute_forcer import BruteForcer
 from source.data.card import Card
 from source.data.knowledge import Knowledge
@@ -9,9 +10,9 @@ from source.logic.deriver import Deriver
 
 
 class Watson:
-    def __init__(self, session: Session):
-        self.session = session
-        self.context = session.context
+    def __init__(self, context: Context):
+        self.context = context
+        self.session = Session(context)
         self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
         self.brute_forcer = BruteForcer(self.session, self.knowledge_table)
         self.deriver = Deriver(self.session, self.knowledge_table)
@@ -36,3 +37,6 @@ class Watson:
 
     def get_knowledge_table(self) -> KnowledgeTable:
         return self.knowledge_table
+
+    def get_context(self) -> Context:
+        return self.context

@@ -1,17 +1,15 @@
-from unittest import TestCase, skip
+from unittest import TestCase
 
 from source.data.knowledge import Knowledge
 from source.data.rumour import Rumour
-from source.data.session import Session
-from test.fixture.context import Cards, michiel, menno, context_fixture, tom
 from source.logic.watson import Watson
+from test.fixture.context import Cards, michiel, menno, context_fixture, tom
 
 
 class TestWatson(TestCase):
     def setUp(self) -> None:
         context = context_fixture
-        session = Session(context)
-        self.empty_watson = Watson(session)
+        self.empty_watson = Watson(context)
 
     def test_add_card(self):
         watson = self.empty_watson

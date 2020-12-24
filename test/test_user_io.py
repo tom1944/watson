@@ -1,19 +1,18 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from source.data.session import Session
-from source.io import user_io
 from source.data.knowledge import Knowledge
-from test.fixture.context import Cards, context_fixture
+from source.io import user_io
 from source.io.user_io import WatsonShell
 from source.logic.watson import Watson
+from test.fixture.context import Cards, context_fixture
 
 
 class TestUserIO(TestCase):
     def setUp(self):
-        self.session = Session(context_fixture)
-        self.watson = Watson(self.session)
+        self.watson = Watson(context_fixture)
         self.shell = WatsonShell(self.watson)
+        self.session = self.watson.session
 
     def test_do_card(self):
         self.shell.onecmd("card Tom Roodhart")
