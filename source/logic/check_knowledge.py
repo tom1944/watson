@@ -7,7 +7,6 @@ from source.data.player import Player
 from source.data.session import Session
 
 
-# assumes new_player_hands only contains free cards
 def check_knowledge(knowledge_table: KnowledgeTable, session: Session,
                     new_player_hands: Dict[Player, List[Card]] = None) -> bool:
 

@@ -28,8 +28,7 @@ class SolutionFinder:
             for murder_room in murder_rooms:
                 for murder_character in murder_characters:
                     new_free_cards = [c for c in free_cards if c not in [murder_character, murder_weapon, murder_room]]
-                    new_player_hands = self.player_hands.copy()
-                    possible_player_hands = self._possible_solution(new_player_hands, new_free_cards)
+                    possible_player_hands = self._possible_solution(self.player_hands.copy(), new_free_cards)
                     if possible_player_hands is not None:
                         return [murder_character, murder_weapon, murder_room], possible_player_hands
         return None
