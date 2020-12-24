@@ -2,13 +2,13 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from source.data.knowledge import Knowledge
-from source.io import user_io
-from source.io.user_io import WatsonShell
+from source.io import watson_shell
+from source.io.watson_shell import WatsonShell
 from source.logic.watson import Watson
 from test.fixture.context import Cards, context_fixture
 
 
-class TestUserIO(TestCase):
+class TestWatsonShell(TestCase):
     def setUp(self):
         self.watson = Watson(context_fixture)
         self.shell = WatsonShell(self.watson)
@@ -36,11 +36,11 @@ class TestUserIO(TestCase):
         self.assertEqual(replies[1], (self.watson.context.players[2], Knowledge.TRUE))
 
     def test_match_input_string_from_set(self):
-        result = user_io.match_input_string_from_set("hon", ["bak", "gast", "matig"])
+        result = watson_shell.match_input_string_from_set("hon", ["bak", "gast", "matig"])
         self.assertEqual(None, result)
-        result = user_io.match_input_string_from_set("hon", ["hond", "gast", "matig"])
+        result = watson_shell.match_input_string_from_set("hon", ["hond", "gast", "matig"])
         self.assertEqual("hond", result)
-        result = user_io.match_input_string_from_set("hond", ["hond", "honden", "matig"])
+        result = watson_shell.match_input_string_from_set("hond", ["hond", "honden", "matig"])
         self.assertEqual("hond", result)
-        result = user_io.match_input_string_from_set("hon", ["hond", "honden", "matig"])
+        result = watson_shell.match_input_string_from_set("hon", ["hond", "honden", "matig"])
         self.assertEqual(None, result)
