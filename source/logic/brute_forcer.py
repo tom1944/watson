@@ -8,32 +8,30 @@ from source.logic.solution_finder import SolutionFinder
 
 class BruteForcer:
     def __init__(self, clues: Clues, knowledge_table: KnowledgeTable):
-        self.clues = clues
-        self.context = clues.context
-        self.knowledge_table = knowledge_table
-        self.solution_finder = SolutionFinder(clues, knowledge_table)
+        self._knowledge_table = knowledge_table
+        self._solution_finder = SolutionFinder(clues, knowledge_table)
 
     def brute_force_on_card(self, player: Player, card: Card) -> Knowledge:
-        if self.must_be_true(player, card):
+        if self._must_be_true(player, card):
             return Knowledge.TRUE
-        if self.must_be_false(player, card):
+        if self._must_be_false(player, card):
             return Knowledge.FALSE
         return Knowledge.MAYBE
 
-    def must_be_true(self, player: Player, card: Card) -> bool:
-        self.knowledge_table.set(player, card, Knowledge.FALSE)
-        can_be_false = self.has_solution()
-        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+    def _must_be_true(self, player: Player, card: Card) -> bool:
+        self._knowledge_table.set(player, card, Knowledge.FALSE)
+        can_be_false = self._has_solution()
+        self._knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
         return not can_be_false
 
-    def must_be_false(self, player: Player, card: Card) -> bool:
-        self.knowledge_table.set(player, card, Knowledge.TRUE)
-        can_be_true = self.has_solution()
-        self.knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
+    def _must_be_false(self, player: Player, card: Card) -> bool:
+        self._knowledge_table.set(player, card, Knowledge.TRUE)
+        can_be_true = self._has_solution()
+        self._knowledge_table.set_forcefully(player, card, Knowledge.MAYBE)
         return not can_be_true
 
-    def has_solution(self):
-        if self.solution_finder.find_possible_solution() is None:
+    def _has_solution(self):
+        if self._solution_finder.find_possible_solution() is None:
             return False
         else:
             return True
