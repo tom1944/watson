@@ -36,6 +36,22 @@ class Watson:
                     if knowledge != Knowledge.MAYBE:
                         self.deriver.derive_from_new_knowledge(player, card, knowledge)
 
+    def add_info_from_clues(self, clues: Clues):
+        self._add_cards_from_clues(clues)
+        self._add_rumours_from_clues(clues)
+        self.brute_force_and_derive_from_findings()
+
+    def _add_cards_from_clues(self, clues):
+        for player, cards in clues.cards_seen.items():
+            for card in cards:
+                self.clues.add_card(card, player)
+                self.deriver.derive_from_new_knowledge(player, card, Knowledge.TRUE)
+
+    def _add_rumours_from_clues(self, clues):
+        for rumour in clues.get_rumours():
+            self.clues.add_rumour(rumour)
+            self.deriver.derive_from_new_rumour(rumour)
+
     def display_state(self):
         formatter = KnowledgeTableFormatter()
         formatted_table = formatter.format_knowledge_table(self.knowledge_table)

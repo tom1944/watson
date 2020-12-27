@@ -1,5 +1,6 @@
 from unittest import TestCase
 
+from source.data.clues import Clues
 from source.data.knowledge import Knowledge
 from source.data.rumour import Rumour
 from source.logic.watson import Watson
@@ -39,3 +40,28 @@ class TestWatson(TestCase):
             Knowledge.TRUE,
             watson.knowledge_table.get(michiel, Cards.ROODHART)
         )
+
+    def test_add_info_from_clues(self):
+        clues = Clues(context_fixture)
+        clues.add_card(Cards.BLAAUWVANDRAET, tom)
+        clues.add_card(Cards.KANDELAAR, tom)
+        rumour_cards = [Cards.BLAAUWVANDRAET, Cards.KANDELAAR, Cards.GASTENVERBLIJF]
+        clues.add_rumour(
+            Rumour(
+                menno,
+                rumour_cards,
+                [
+                    (menno, Knowledge.FALSE), (michiel, Knowledge.TRUE)
+                ]
+            )
+        )
+        watson = self.empty_watson
+        watson.add_info_from_clues(clues)
+        for card in rumour_cards:
+            for player in context_fixture.players:
+                if (card is Cards.KANDELAAR or card is Cards.BLAAUWVANDRAET) and player is tom:
+                    self.assertEqual(Knowledge.TRUE, watson.get_knowledge_table().get(player, card))
+                elif card is Cards.GASTENVERBLIJF and player is michiel:
+                    self.assertEqual(Knowledge.TRUE, watson.get_knowledge_table().get(player, card))
+                else:
+                    self.assertEqual(Knowledge.FALSE, watson.get_knowledge_table().get(player, card))
