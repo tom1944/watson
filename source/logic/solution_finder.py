@@ -4,20 +4,20 @@ from source.data.card import Card, Category
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
-from source.data.session import Session
+from source.data.clues import Clues
 from source.logic.check_knowledge import check_knowledge
 
 
 class SolutionFinder:
-    def __init__(self, session: Session, knowledge_table: KnowledgeTable):
-        self.session = session
-        self.context = session.get_context()
+    def __init__(self, clues: Clues, knowledge_table: KnowledgeTable):
+        self.clues = clues
+        self.context = clues.get_context()
         self.knowledge_table = knowledge_table
         self.available_players_for_card = {}
         self.player_hands = {}
 
     def find_possible_solution(self):
-        if not check_knowledge(self.knowledge_table, self.session):
+        if not check_knowledge(self.knowledge_table, self.clues):
             return None
 
         player_hands, murder_cards, free_cards = self.knowledge_table.current_player_hands()
@@ -62,7 +62,7 @@ class SolutionFinder:
             if len(player_hands[player]) < player.cardAmount:
                 player_hands[player].append(card_to_give)
                 cards_left.remove(card_to_give)
-                if check_knowledge(self.knowledge_table, self.session, player_hands):
+                if check_knowledge(self.knowledge_table, self.clues, player_hands):
                     possible_player_hands = self._possible_solution(player_hands, cards_left)
                     if possible_player_hands is not None:
                         return possible_player_hands

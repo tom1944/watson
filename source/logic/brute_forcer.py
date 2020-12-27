@@ -2,16 +2,16 @@ from source.data.card import Card
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
-from source.data.session import Session
+from source.data.clues import Clues
 from source.logic.solution_finder import SolutionFinder
 
 
 class BruteForcer:
-    def __init__(self, session: Session, knowledge_table: KnowledgeTable):
-        self.session = session
-        self.context = session.context
+    def __init__(self, clues: Clues, knowledge_table: KnowledgeTable):
+        self.clues = clues
+        self.context = clues.context
         self.knowledge_table = knowledge_table
-        self.solution_finder = SolutionFinder(session, knowledge_table)
+        self.solution_finder = SolutionFinder(clues, knowledge_table)
 
     def brute_force_on_card(self, player: Player, card: Card) -> Knowledge:
         if self.must_be_true(player, card):

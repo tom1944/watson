@@ -5,22 +5,22 @@ from source.data.card import Category, Card
 from source.data.knowledge import Knowledge
 from source.data.player import Player
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 
 
-def save_session_to_file(session: Session, file_path: str):
+def save_clues_to_file(clues: Clues, file_path: str):
     with open(file_path, 'w') as file:
-        save_session_to_file_object(session, file)
+        save_clues_to_file_object(clues, file)
 
 
-def save_session_to_file_object(session: Session, file_object):
-    context = session.context
+def save_clues_to_file_object(clues: Clues, file_object):
+    context = clues.context
     config = {
         "players": players_of_context_to_json_object(context.players),
         "cards": cards_of_context_to_json_object(context.cards + context.open_cards),
         "open_cards": cards_to_json_object(context.open_cards),
-        "cards_seen": cards_seen_to_json_object(session.cards_seen),
-        "rumours_made": rumours_to_json_object(session.get_rumours())
+        "cards_seen": cards_seen_to_json_object(clues.cards_seen),
+        "rumours_made": rumours_to_json_object(clues.get_rumours())
     }
 
     json.dump(config, file_object, indent=2)

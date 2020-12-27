@@ -3,7 +3,7 @@ import unittest
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from source.logic.solution_finder import SolutionFinder
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
@@ -11,7 +11,7 @@ from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 class TestSolutionFinder(unittest.TestCase):
     def setUp(self) -> None:
         context = context_fixture
-        self.empty_solution_finder = SolutionFinder(Session(context),
+        self.empty_solution_finder = SolutionFinder(Clues(context),
                                                     KnowledgeTable(context.players, context.cards))
 
         knowledge_table = KnowledgeTable(context.players, context.cards)
@@ -24,14 +24,14 @@ class TestSolutionFinder(unittest.TestCase):
             knowledge_table.set(menno, card, Knowledge.TRUE)
         for card in michiel_cards:
             knowledge_table.set(michiel, card, Knowledge.TRUE)
-        self.half_full_solution_finder = SolutionFinder(Session(context), knowledge_table)
+        self.half_full_solution_finder = SolutionFinder(Clues(context), knowledge_table)
 
     def test_possible_solution_empty_state(self):
         self.assertFalse(self.empty_solution_finder.find_possible_solution() is None)
 
     def test_possible_solution_only_rumours(self):
         solution_finder = self.empty_solution_finder
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.KANDELAAR, Cards.BUBBELBAD, Cards.DEWIT],
@@ -41,7 +41,7 @@ class TestSolutionFinder(unittest.TestCase):
                 ]
             )
         )
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 menno,
                 [Cards.HALTER, Cards.HAL, Cards.PIMPEL],
@@ -55,7 +55,7 @@ class TestSolutionFinder(unittest.TestCase):
 
     def test_has_solution_false_negative(self):
         solution_finder = self.half_full_solution_finder
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.KNUPPEL, Cards.BUBBELBAD, Cards.BLAAUWVANDRAET],
@@ -69,7 +69,7 @@ class TestSolutionFinder(unittest.TestCase):
 
     def test_has_solution_false_positive(self):
         solution_finder = self.half_full_solution_finder
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.BIJL, Cards.BUBBELBAD, Cards.BLAAUWVANDRAET],
@@ -86,14 +86,14 @@ class TestSolutionFinder(unittest.TestCase):
 
     def test_has_solution_too_many_cards(self):
         solution_finder = self.half_full_solution_finder
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.BLAAUWVANDRAET, Cards.BUBBELBAD, Cards.MES],
                 [(menno, Knowledge.TRUE)]
             )
         )
-        solution_finder.session.add_rumour(
+        solution_finder.clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.BLAAUWVANDRAET, Cards.BUBBELBAD, Cards.KANDELAAR],

@@ -4,15 +4,15 @@ from source.data.card import Card
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
-from source.data.session import Session
+from source.data.clues import Clues
 
 
-def check_knowledge(knowledge_table: KnowledgeTable, session: Session,
+def check_knowledge(knowledge_table: KnowledgeTable, clues: Clues,
                     new_player_hands: Dict[Player, List[Card]] = None) -> bool:
 
     player_hands, murder_cards, free_cards = knowledge_table.current_player_hands()
 
-    players = session.context.players
+    players = clues.context.players
     for player in players:
         if new_player_hands is not None:
             player_hands[player] += new_player_hands[player]
@@ -23,7 +23,7 @@ def check_knowledge(knowledge_table: KnowledgeTable, session: Session,
         if len(player_hands[player]) > player.cardAmount:
             return False
 
-    for rumour in session.rumours:
+    for rumour in clues.rumours:
         rumour_cards = rumour.rumour_cards
         for replier, knowledge in rumour.replies:
             has_rumour_card = set(rumour_cards).isdisjoint(player_hands[replier])

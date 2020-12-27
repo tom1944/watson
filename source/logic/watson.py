@@ -6,25 +6,25 @@ from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from source.logic.deriver import Deriver
 
 
 class Watson:
     def __init__(self, context: Context):
         self.context = context
-        self.session = Session(context)
+        self.clues = Clues(context)
         self.knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
-        self.brute_forcer = BruteForcer(self.session, self.knowledge_table)
-        self.deriver = Deriver(self.session, self.knowledge_table)
+        self.brute_forcer = BruteForcer(self.clues, self.knowledge_table)
+        self.deriver = Deriver(self.clues, self.knowledge_table)
 
     def add_knowledge(self, player: Player, card: Card, knowledge: Knowledge):
-        self.session.add_card(card, player)
+        self.clues.add_card(card, player)
         self.deriver.derive_from_new_knowledge(player, card, knowledge)
         self.brute_force_and_derive_from_findings()
 
     def add_rumour(self, rumour: Rumour) -> None:
-        self.session.add_rumour(rumour)
+        self.clues.add_rumour(rumour)
         self.deriver.derive_from_new_rumour(rumour)
         self.brute_force_and_derive_from_findings()
 

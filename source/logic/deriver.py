@@ -5,14 +5,14 @@ from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from source.data.clauses import Clauses
 
 
 class Deriver:
-    def __init__(self, session: Session, knowledge_table: KnowledgeTable):
-        self.session = session
-        self.context = session.context
+    def __init__(self, clues: Clues, knowledge_table: KnowledgeTable):
+        self.clues = clues
+        self.context = clues.context
         self.knowledge_table = knowledge_table
         self.clauses = Clauses(self.context)
 

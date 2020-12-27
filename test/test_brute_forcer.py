@@ -3,7 +3,7 @@ import unittest
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from source.logic.brute_forcer import BruteForcer
 from test.fixture.context import context_fixture, tom, Cards, menno, michiel
 
@@ -11,8 +11,8 @@ from test.fixture.context import context_fixture, tom, Cards, menno, michiel
 class TestBruteForcer(unittest.TestCase):
     def setUp(self) -> None:
         self.knowledge_table = KnowledgeTable(context_fixture.players, context_fixture.cards)
-        self.session = Session(context_fixture)
-        self.empty_brute_forcer = BruteForcer(self.session, self.knowledge_table)
+        self.clues = Clues(context_fixture)
+        self.empty_brute_forcer = BruteForcer(self.clues, self.knowledge_table)
 
     def test_brute_force_on_card_empty_state(self):
         self.assertEqual(Knowledge.MAYBE, self.empty_brute_forcer.brute_force_on_card(tom, Cards.MES))
@@ -20,9 +20,9 @@ class TestBruteForcer(unittest.TestCase):
     def test_brute_force_on_card_with_true_result(self):
         brute_forcer = self.empty_brute_forcer
         knowledge_table = self.knowledge_table
-        session = self.session
+        clues = self.clues
 
-        session.add_rumour(
+        clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.ROODHART, Cards.MES, Cards.EETKAMER],
@@ -46,9 +46,9 @@ class TestBruteForcer(unittest.TestCase):
 
     def test_brute_force_on_card_with_false_result(self):
         brute_forcer = self.empty_brute_forcer
-        session = self.session
+        clues = self.clues
 
-        session.add_rumour(
+        clues.add_rumour(
             Rumour(
                 tom,
                 [Cards.ROODHART, Cards.MES, Cards.EETKAMER],

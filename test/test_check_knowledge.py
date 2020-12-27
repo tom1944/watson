@@ -4,14 +4,14 @@ from source.logic.check_knowledge import check_knowledge
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 
 class TestCheckKnowledge(unittest.TestCase):
     def setUp(self) -> None:
         context = context_fixture
-        self.empty_session = Session(context)
+        self.empty_clues = Clues(context)
 
         knowledge_table = KnowledgeTable(context.players, context.cards)
         knowledge_table.set(tom, Cards.MES, Knowledge.TRUE)
@@ -32,15 +32,15 @@ class TestCheckKnowledge(unittest.TestCase):
         knowledge_table.set(tom, Cards.GASTENVERBLIJF, Knowledge.TRUE)
         self.tom_full_knowledge_table = knowledge_table
 
-    def test_empty_session(self):
-        session = self.empty_session
-        context = session.get_context()
-        self.assertTrue(check_knowledge(KnowledgeTable(context.players, context.cards), session))
+    def test_empty_clues(self):
+        clues = self.empty_clues
+        context = clues.get_context()
+        self.assertTrue(check_knowledge(KnowledgeTable(context.players, context.cards), clues))
 
     def test_small_game(self):
-        session = self.empty_session
+        clues = self.empty_clues
 
-        session.rumours = [
+        clues.rumours = [
             Rumour(
                 tom,
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -51,12 +51,12 @@ class TestCheckKnowledge(unittest.TestCase):
             )
         ]
 
-        self.assertTrue(check_knowledge(self.small_knowledge_table, session))
+        self.assertTrue(check_knowledge(self.small_knowledge_table, clues))
 
     def test_false_negative_reply(self):
         # tom lies about not having MES
-        session = self.empty_session
-        session.rumours.append(
+        clues = self.empty_clues
+        clues.rumours.append(
             Rumour(
                 menno,
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -66,14 +66,14 @@ class TestCheckKnowledge(unittest.TestCase):
             )
         )
 
-        self.assertFalse(check_knowledge(self.small_knowledge_table, session))
+        self.assertFalse(check_knowledge(self.small_knowledge_table, clues))
 
     def test_false_positive_reply(self):
         # michiel lies about having any of the cards
-        session = self.empty_session
+        clues = self.empty_clues
         knowledge_table = self.small_knowledge_table
 
-        session.rumours = [
+        clues.rumours = [
             Rumour(
                 tom,
                 [Cards.MES, Cards.BUBBELBAD, Cards.PIMPEL],
@@ -83,21 +83,21 @@ class TestCheckKnowledge(unittest.TestCase):
                 ]
             )
         ]
-        self.assertFalse(check_knowledge(knowledge_table, session))
+        self.assertFalse(check_knowledge(knowledge_table, clues))
 
     def test_direct_card_amount_contradiction(self):
         knowledge_table = self.tom_full_knowledge_table
         knowledge_table.set(tom, Cards.HAL, Knowledge.TRUE)
-        self.assertFalse(check_knowledge(knowledge_table, self.empty_session))
+        self.assertFalse(check_knowledge(knowledge_table, self.empty_clues))
 
     def test_indirect_card_amount_contradiction(self):
         knowledge_table = self.tom_full_knowledge_table
-        session = self.empty_session
+        clues = self.empty_clues
 
         # Should not yet be contradictory
-        self.assertTrue(check_knowledge(knowledge_table, session))
+        self.assertTrue(check_knowledge(knowledge_table, clues))
 
-        session.rumours.append(
+        clues.rumours.append(
             Rumour(
                 menno,
                 [Cards.HALTER, Cards.ZITKAMER, Cards.ROODHART],
@@ -107,12 +107,12 @@ class TestCheckKnowledge(unittest.TestCase):
             )
         )
 
-        self.assertFalse(check_knowledge(knowledge_table, session))
+        self.assertFalse(check_knowledge(knowledge_table, clues))
 
     def test_additional_player_hands(self):
-        session = self.empty_session
+        clues = self.empty_clues
         knowledge_table = self.small_knowledge_table
-        session.rumours = [
+        clues.rumours = [
             Rumour(
                 tom,
                 [Cards.MES, Cards.THEATER, Cards.BLAAUWVANDRAET],
@@ -122,9 +122,9 @@ class TestCheckKnowledge(unittest.TestCase):
                 ]
             )
         ]
-        player_hands = {p: [] for p in session.context.players}
+        player_hands = {p: [] for p in clues.context.players}
         # Should not yet be contradictory
-        self.assertTrue(check_knowledge(knowledge_table, session, player_hands))
+        self.assertTrue(check_knowledge(knowledge_table, clues, player_hands))
 
         player_hands[menno].append(Cards.BLAAUWVANDRAET)
-        self.assertFalse(check_knowledge(knowledge_table, session, player_hands))
+        self.assertFalse(check_knowledge(knowledge_table, clues, player_hands))

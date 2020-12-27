@@ -3,28 +3,28 @@ from io import StringIO
 
 from source.data.knowledge import Knowledge
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 
-from source.serialize.load_session import load_session
-from source.serialize.save_session import save_session_to_file_object
+from source.serialize.load_clues import load_clues
+from source.serialize.save_clues import save_clues_to_file_object
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 
-PATH_OF_SERIALIZED_SESSION = 'test/serialize/session.json'
+PATH_OF_SERIALIZED_CLUES = 'test/serialize/clues.json'
 
 
 class TestSerialization(unittest.TestCase):
     def setUp(self):
-        self.make_session_fixture()
+        self.make_clues_fixture()
 
-    def make_session_fixture(self):
-        session = Session(context_fixture)
+    def make_clues_fixture(self):
+        clues = Clues(context_fixture)
         cards_tom = [Cards.ROODHART, Cards.GROENEWOUD, Cards.KEUKEN, Cards.THEATER, Cards.KNUPPEL]
 
         for c in cards_tom:
-            session.add_card(c, tom)
+            clues.add_card(c, tom)
 
-        session.add_rumour(Rumour(
+        clues.add_rumour(Rumour(
             claimer=menno,
             rumour_cards=[Cards.MES, Cards.HAL, Cards.PIMPEL],
             replies=[
@@ -33,23 +33,23 @@ class TestSerialization(unittest.TestCase):
             ]
         ))
 
-        self.session = session
+        self.clues = clues
 
-    def test_load_session(self):
-        session = load_session(PATH_OF_SERIALIZED_SESSION)
-        expected_session = self.session
-        self.assertEqual(session, expected_session)
+    def test_load_clues(self):
+        clues = load_clues(PATH_OF_SERIALIZED_CLUES)
+        expected_clues = self.clues
+        self.assertEqual(clues, expected_clues)
 
-    def test_save_session(self):
-        with open(PATH_OF_SERIALIZED_SESSION, 'r') as file:
-            reference_serialized_session = file.read()
+    def test_save_clues(self):
+        with open(PATH_OF_SERIALIZED_CLUES, 'r') as file:
+            reference_serialized_clues = file.read()
 
         with StringIO() as in_memory_stream:
 
-            save_session_to_file_object(
-                session=self.session,
+            save_clues_to_file_object(
+                clues=self.clues,
                 file_object=in_memory_stream
             )
-            serialized_session = in_memory_stream.getvalue()
+            serialized_clues = in_memory_stream.getvalue()
 
-        self.assertEqual(reference_serialized_session, serialized_session)
+        self.assertEqual(reference_serialized_clues, serialized_clues)

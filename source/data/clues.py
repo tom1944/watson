@@ -6,7 +6,7 @@ from source.data.player import Player
 from source.data.rumour import Rumour
 
 
-class Session:
+class Clues:
     context: Context
     cards_seen: Dict[Player, List[Card]]
     rumours: List[Rumour]

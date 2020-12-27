@@ -6,10 +6,10 @@ from source.data.context import Context
 from source.data.knowledge import Knowledge
 from source.data.player import Player
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 
 
-def load_session(filename: str) -> Session:
+def load_clues(filename: str) -> Clues:
     with open(filename, 'r') as file:
         config = json.load(file)
 
@@ -29,23 +29,23 @@ def load_session(filename: str) -> Session:
 
     cards_seen = retrieve_cards_seen(all_cards, cards_seen_json, players)
     rumours = retrieve_rumours(players, rumours_json, used_cards)
-    session = Session(Context(players, used_cards, open_cards))
+    clues = Clues(Context(players, used_cards, open_cards))
 
-    add_cards_to_session(cards_seen, session)
-    add_rumours_to_session(rumours, session)
+    add_cards_to_clues(cards_seen, clues)
+    add_rumours_to_clues(rumours, clues)
 
-    return session
+    return clues
 
 
-def add_cards_to_session(cards_seen: Dict[Player, List[Card]], session: Session):
+def add_cards_to_clues(cards_seen: Dict[Player, List[Card]], clues: Clues):
     for player, cards in cards_seen.items():
         for c in cards:
-            session.add_card(c, player)
+            clues.add_card(c, player)
 
 
-def add_rumours_to_session(rumours: List[Rumour], session: Session):
+def add_rumours_to_clues(rumours: List[Rumour], clues: Clues):
     for r in rumours:
-        session.add_rumour(r)
+        clues.add_rumour(r)
 
 
 def retrieve_rumours(players, rumours_json, used_cards) -> List[Rumour]:

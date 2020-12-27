@@ -4,16 +4,16 @@ from source.logic.deriver import Deriver
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.rumour import Rumour
-from source.data.session import Session
+from source.data.clues import Clues
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 
 class TestDeriver(unittest.TestCase):
     def setUp(self) -> None:
-        session = Session(context_fixture)
-        self.context = session.get_context()
+        clues = Clues(context_fixture)
+        self.context = clues.get_context()
         self.empty_knowledge_table = KnowledgeTable(self.context.players, self.context.cards)
-        self.empty_deriver = Deriver(session, self.empty_knowledge_table)
+        self.empty_deriver = Deriver(clues, self.empty_knowledge_table)
 
     def test_inspect_clauses(self):
         deriver = self.empty_deriver
