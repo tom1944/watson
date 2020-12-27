@@ -1,5 +1,4 @@
 import math
-from threading import Thread
 
 from source.data.card import Card
 from source.data.knowledge import Knowledge

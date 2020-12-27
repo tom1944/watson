@@ -103,10 +103,14 @@ class WatsonShell(Cmd):
         """"autosave <on/off>"""
         if arg == 'on':
             self.auto_save = True
+            print('Autosave is turned on')
         elif arg == 'off':
             self.auto_save = False
+            print('Autosave is turned off')
         else:
             print('Usage: ' + str(self.do_autosave.__doc__))
+            return False
+        print('Set autosave ' + str(self.auto_save))
 
     def do_exit(self, arg):
         """Exit the program"""
@@ -118,14 +122,14 @@ class WatsonShell(Cmd):
     def ask_replies(self) -> Optional[List[Tuple[Player, Knowledge]]]:
         replies = []
         while True:
-            response = input("     ")
+            response = input("       ")
             if response.lower() == "abort":
                 return None
             if response.lower() == "done" and replies:
                 return replies
             response = response.split()
             if len(response) != 2:
-                print("Usage: <Player> <y|n>")
+                print("Usage: <Player> <y|n> or 'done' to finish or 'abort' to abort")
                 continue
             player = match_player(response[0], self.context.players)
             if response[1] == "y":

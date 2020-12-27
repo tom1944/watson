@@ -55,3 +55,6 @@ class TestWatsonShell(TestCase):
 
         result = watson_shell.match_input_string_from_set("hon", ["hond", "honden", "matig"])
         self.assertEqual(None, result)
+
+        result = watson_shell.match_input_string_from_set("hal", ["Halter", "Hal"])
+        self.assertEqual(None, result)
