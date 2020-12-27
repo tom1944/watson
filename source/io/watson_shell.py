@@ -10,7 +10,7 @@ from source.serialize.save_clues import save_clues_to_file
 
 
 class WatsonShell(Cmd):
-    def __init__(self, watson: Watson, filepath: str = 'clue_log', auto_save: bool = False, **kwargs):
+    def __init__(self, watson: Watson, filepath: str = 'clue_log.json', auto_save: bool = False, **kwargs):
         Cmd.__init__(self, **kwargs)
         self.watson = watson
         self.context = watson.get_context()
