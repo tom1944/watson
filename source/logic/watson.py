@@ -1,4 +1,5 @@
 from source.data.context import Context
+from source.io.knowledge_table_formatter import KnowledgeTableFormatter
 from source.logic.brute_forcer import BruteForcer
 from source.data.card import Card
 from source.data.knowledge import Knowledge
@@ -34,6 +35,11 @@ class Watson:
                     knowledge = self.brute_forcer.brute_force_on_card(player, card)
                     if knowledge != Knowledge.MAYBE:
                         self.deriver.derive_from_new_knowledge(player, card, knowledge)
+
+    def display_state(self):
+        formatter = KnowledgeTableFormatter()
+        formatted_table = formatter.format_knowledge_table(self.knowledge_table)
+        print(formatted_table)
 
     def get_knowledge_table(self) -> KnowledgeTable:
         return self.knowledge_table

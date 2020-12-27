@@ -33,6 +33,7 @@ class WatsonShell(Cmd):
             return False
 
         self.watson.add_knowledge(owner, card, Knowledge.TRUE)
+        self.watson.display_state()
 
     def do_c(self, arg):
         """"Alias for card"""
@@ -63,6 +64,7 @@ class WatsonShell(Cmd):
             return False
         rumour = Rumour(claimer, rumour_cards, replies)
         self.watson.add_rumour(rumour)
+        self.watson.display_state()
 
     def do_r(self, arg):
         """Alias for rumour"""

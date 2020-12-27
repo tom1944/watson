@@ -40,4 +40,3 @@ class KnowledgeTableFormatter:
                 s = knowledge_to_str(knowledge_table.get(player, card))
                 table.set(card_i + 1, player_i + 1, s)
         return table.to_string()
-
