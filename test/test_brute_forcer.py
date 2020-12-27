@@ -1,10 +1,11 @@
+import time
 import unittest
 
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.rumour import Rumour
 from source.data.clues import Clues
-from source.logic.brute_forcer import BruteForcer
+from source.logic.brute_forcer import BruteForcer, BruteForceTimeoutError
 from test.fixture.context import context_fixture, tom, Cards, menno, michiel
 
 
@@ -58,3 +59,29 @@ class TestBruteForcer(unittest.TestCase):
             )
         )
         self.assertEqual(Knowledge.FALSE, brute_forcer.brute_force_on_card(menno, Cards.EETKAMER))
+
+    def test_brute_forcer_timeout(self):
+        brute_forcer = self.empty_brute_forcer
+        knowledge_table = self.knowledge_table
+        clues = self.clues
+
+        clues.add_rumour(
+            Rumour(
+                tom,
+                [Cards.ROODHART, Cards.MES, Cards.EETKAMER],
+                [
+                    (menno, Knowledge.TRUE)
+                ]
+            )
+        )
+        knowledge_table.set(menno, Cards.ROODHART, Knowledge.FALSE)
+        knowledge_table.set(menno, Cards.MES, Knowledge.FALSE)
+        timeout_sec = 1
+
+        start_time_sec = time.time()
+        with self.assertRaises(BruteForceTimeoutError):
+            brute_forcer.brute_force_on_card(menno, Cards.EETKAMER, timeout_sec=timeout_sec)
+        end_time_sec = time.time()
+
+        diff_time_sec = end_time_sec - start_time_sec
+        self.assertAlmostEqual(timeout_sec, diff_time_sec, delta=0.1)
