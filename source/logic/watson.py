@@ -52,13 +52,15 @@ class Watson:
             self.clues.add_rumour(rumour)
             self.deriver.derive_from_new_rumour(rumour)
 
-    def display_state(self):
+    def display_state(self) -> str:
         formatter = KnowledgeTableFormatter()
-        formatted_table = formatter.format_knowledge_table(self.knowledge_table)
-        print(formatted_table)
+        return formatter.format_knowledge_table(self.knowledge_table)
 
     def get_knowledge_table(self) -> KnowledgeTable:
         return self.knowledge_table
 
     def get_context(self) -> Context:
         return self.context
+
+    def get_clues(self) -> Clues:
+        return self.clues

@@ -6,19 +6,25 @@ from source.data.knowledge import Knowledge
 from source.data.player import Player
 from source.data.rumour import Rumour
 from source.logic.watson import Watson
+from source.serialize.save_clues import save_clues_to_file
 
 
 class WatsonShell(Cmd):
-    def __init__(self, watson: Watson, **kwargs):
+    def __init__(self, watson: Watson, filepath: str = 'clue_log', auto_save: bool = False, **kwargs):
         Cmd.__init__(self, **kwargs)
         self.watson = watson
         self.context = watson.get_context()
+        self.filepath = filepath
+        self.auto_save = auto_save
         self.intro = "Welcome to Watson, the Cluedo assistant. Type help or ? to list commands.\n"
         self.prompt = ">>> "
 
+    def preloop(self) -> None:
+        print(self.watson.display_state())
+
     def do_card(self, arg):
         """"card <owner> <card> """
-        args = arg.split()
+        args = arg.split(maxsplit=1)
 
         if len(args) != 2:
             print('Usage: ' + str(self.do_card.__doc__))
@@ -33,7 +39,9 @@ class WatsonShell(Cmd):
             return False
 
         self.watson.add_knowledge(owner, card, Knowledge.TRUE)
-        self.watson.display_state()
+        print(self.watson.display_state())
+        if self.auto_save:
+            self.do_save()
 
     def do_c(self, arg):
         """"Alias for card"""
@@ -64,11 +72,48 @@ class WatsonShell(Cmd):
             return False
         rumour = Rumour(claimer, rumour_cards, replies)
         self.watson.add_rumour(rumour)
-        self.watson.display_state()
+        print(self.watson.display_state())
+        if self.auto_save:
+            self.do_save()
 
     def do_r(self, arg):
         """Alias for rumour"""
         self.do_rumour(arg)
+
+    def do_save(self, arg=''):
+        """save [filename]"""
+        args = arg.split()
+
+        if len(args) == 0:
+            pass
+        elif len(args) == 1:
+            self.filepath = args[0] + '.json'
+        else:
+            print('Usage: ' + str(self.do_rumour.__doc__))
+            return False
+
+        save_clues_to_file(self.watson.get_clues(), self.filepath)
+        print(f'Session saved to {self.filepath}')
+
+    def do_s(self, arg):
+        """Alias for save"""
+        self.do_save(arg)
+
+    def do_autosave(self, arg):
+        """"autosave <on/off>"""
+        if arg == 'on':
+            self.auto_save = True
+        elif arg == 'off':
+            self.auto_save = False
+        else:
+            print('Usage: ' + str(self.do_autosave.__doc__))
+
+    def do_exit(self, arg):
+        """Exit the program"""
+        if arg != '':
+            print('Usage: ' + str(self.do_autosave.__doc__))
+            return False
+        return True
 
     def ask_replies(self) -> Optional[List[Tuple[Player, Knowledge]]]:
         replies = []
