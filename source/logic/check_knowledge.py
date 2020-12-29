@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from source.data.card import Card
+from source.data.card import Card, Category
 from source.data.knowledge import Knowledge
 from source.data.knowledge_table import KnowledgeTable
 from source.data.player import Player
@@ -11,6 +11,10 @@ def check_knowledge(knowledge_table: KnowledgeTable, clues: Clues,
                     new_player_hands: Dict[Player, List[Card]] = None) -> bool:
 
     player_hands, murder_cards, free_cards = knowledge_table.current_player_hands()
+
+    for cat in Category:
+        if len([c.category for c in murder_cards if c.category is cat]) > 1:
+            return False
 
     players = clues.context.players
     for player in players:

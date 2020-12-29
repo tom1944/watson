@@ -110,7 +110,6 @@ class WatsonShell(Cmd):
         else:
             print('Usage: ' + str(self.do_autosave.__doc__))
             return False
-        print('Set autosave ' + str(self.auto_save))
 
     def do_exit(self, arg):
         """Exit the program"""

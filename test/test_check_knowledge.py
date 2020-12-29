@@ -128,3 +128,13 @@ class TestCheckKnowledge(unittest.TestCase):
 
         player_hands[menno].append(Cards.BLAAUWVANDRAET)
         self.assertFalse(check_knowledge(knowledge_table, clues, player_hands))
+
+    def test_one_murder_card_per_category(self):
+        clues = self.empty_clues
+        knowledge_table = KnowledgeTable(clues.get_context().players, clues.get_context().cards)
+        for player in clues.get_context().players:
+            knowledge_table.set(player, Cards.MES, Knowledge.FALSE)
+        self.assertTrue(check_knowledge(knowledge_table, clues))
+        for player in clues.get_context().players:
+            knowledge_table.set(player, Cards.BIJL, Knowledge.FALSE)
+        self.assertFalse(check_knowledge(knowledge_table, clues))
