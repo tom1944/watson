@@ -1,12 +1,12 @@
 from typing import List
 
-from source.data.card import Card
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.player import Player
-from source.data.rumour import Rumour
-from source.data.clues import Clues
-from source.data.clauses import Clauses
+from source.domain.card import Card
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.player import Player
+from source.domain.rumour import Rumour
+from source.domain.clues import Clues
+from source.domain.clauses import Clauses
 
 
 class Deriver:

@@ -1,9 +1,9 @@
 from typing import Dict, List
 
-from source.data.card import Card
-from source.data.context import Context
-from source.data.player import Player
-from source.data.rumour import Rumour
+from source.domain.card import Card
+from source.domain.context import Context
+from source.domain.player import Player
+from source.domain.rumour import Rumour
 
 
 class Clues:

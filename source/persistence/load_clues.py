@@ -1,12 +1,12 @@
 import json
 from typing import List, Dict
 
-from source.data.card import Card, Category, cat_from_string
-from source.data.context import Context
-from source.data.knowledge import Knowledge
-from source.data.player import Player
-from source.data.rumour import Rumour
-from source.data.clues import Clues
+from source.domain.card import Card, Category, cat_from_string
+from source.domain.context import Context
+from source.domain.knowledge import Knowledge
+from source.domain.player import Player
+from source.domain.rumour import Rumour
+from source.domain.clues import Clues
 
 
 def load_clues(filename: str) -> Clues:

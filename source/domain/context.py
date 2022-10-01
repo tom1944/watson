@@ -1,7 +1,7 @@
 from typing import List, NamedTuple
 
-from source.data.card import Card
-from source.data.player import Player
+from source.domain.card import Card
+from source.domain.player import Player
 
 
 class Context(NamedTuple):

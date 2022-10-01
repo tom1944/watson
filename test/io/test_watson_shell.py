@@ -1,8 +1,8 @@
 from unittest import TestCase
 from unittest.mock import patch, create_autospec, Mock
 
-from source.data.knowledge import Knowledge
-from source.data.rumour import Rumour
+from source.domain.knowledge import Knowledge
+from source.domain.rumour import Rumour
 from source.io import watson_shell
 from source.io.watson_shell import WatsonShell
 from source.logic.watson import Watson

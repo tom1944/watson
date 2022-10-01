@@ -1,8 +1,8 @@
 from typing import NamedTuple, List, Tuple
 
-from source.data.card import Card
-from source.data.knowledge import Knowledge
-from source.data.player import Player
+from source.domain.card import Card
+from source.domain.knowledge import Knowledge
+from source.domain.player import Player
 
 
 class Rumour(NamedTuple):

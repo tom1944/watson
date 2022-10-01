@@ -1,12 +1,12 @@
 from cmd import Cmd
 from typing import List, Optional, Tuple
 
-from source.data.card import Card, Category
-from source.data.knowledge import Knowledge
-from source.data.player import Player
-from source.data.rumour import Rumour
+from source.domain.card import Card, Category
+from source.domain.knowledge import Knowledge
+from source.domain.player import Player
+from source.domain.rumour import Rumour
 from source.logic.watson import Watson
-from source.serialize.save_clues import save_clues_to_file
+from source.persistence.save_clues import save_clues_to_file
 
 
 class WatsonShell(Cmd):

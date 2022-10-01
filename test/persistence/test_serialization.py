@@ -1,16 +1,16 @@
 import unittest
 from io import StringIO
 
-from source.data.knowledge import Knowledge
-from source.data.rumour import Rumour
-from source.data.clues import Clues
+from source.domain.knowledge import Knowledge
+from source.domain.rumour import Rumour
+from source.domain.clues import Clues
 
-from source.serialize.load_clues import load_clues
-from source.serialize.save_clues import save_clues_to_file_object
+from source.persistence.load_clues import load_clues
+from source.persistence.save_clues import save_clues_to_file_object
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 
-PATH_OF_SERIALIZED_CLUES = 'test/serialize/clues.json'
+PATH_OF_SERIALIZED_CLUES = 'test/persistence/clues.json'
 
 
 class TestSerialization(unittest.TestCase):

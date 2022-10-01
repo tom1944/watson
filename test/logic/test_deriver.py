@@ -1,10 +1,10 @@
 import unittest
 
 from source.logic.deriver import Deriver
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.rumour import Rumour
-from source.data.clues import Clues
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.rumour import Rumour
+from source.domain.clues import Clues
 from test.fixture.context import context_fixture, Cards, tom, menno, michiel
 
 

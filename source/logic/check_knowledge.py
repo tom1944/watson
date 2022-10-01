@@ -1,10 +1,10 @@
 from typing import List, Dict
 
-from source.data.card import Card, Category
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.player import Player
-from source.data.clues import Clues
+from source.domain.card import Card, Category
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.player import Player
+from source.domain.clues import Clues
 
 
 def check_knowledge(knowledge_table: KnowledgeTable, clues: Clues,
