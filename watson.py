@@ -2,7 +2,7 @@ import sys
 
 from source.io.watson_shell import WatsonShell
 from source.logic.watson import Watson
-from source.serialize.load_clues import load_clues
+from source.persistence.load_clues import load_clues
 
 
 def main():

@@ -1,12 +1,13 @@
 from cmd import Cmd
 from typing import List, Optional, Tuple
 
-from source.data.card import Card, Category
-from source.data.knowledge import Knowledge
-from source.data.player import Player
-from source.data.rumour import Rumour
+from source.domain.card import Card, Category
+from source.domain.knowledge import Knowledge
+from source.domain.player import Player
+from source.domain.rumour import Rumour
+from source.io.knowledge_table_formatter import KnowledgeTableFormatter
 from source.logic.watson import Watson
-from source.serialize.save_clues import save_clues_to_file
+from source.persistence.save_clues import save_clues_to_file
 
 
 class WatsonShell(Cmd):
@@ -20,7 +21,7 @@ class WatsonShell(Cmd):
         self.prompt = ">>> "
 
     def preloop(self) -> None:
-        print(self.watson.display_state())
+        self._show_game_state()
 
     def do_card(self, arg):
         """"card <owner> <card> """
@@ -39,7 +40,7 @@ class WatsonShell(Cmd):
             return False
 
         self.watson.add_knowledge(owner, card, Knowledge.TRUE)
-        print(self.watson.display_state())
+        self._show_game_state()
         if self.auto_save:
             self.do_save()
 
@@ -67,12 +68,12 @@ class WatsonShell(Cmd):
             print("A rumour should contain all categories")
             return False
 
-        replies = self.ask_replies()
+        replies = self._ask_replies()
         if not replies:
             return False
         rumour = Rumour(claimer, rumour_cards, replies)
         self.watson.add_rumour(rumour)
-        print(self.watson.display_state())
+        self._show_game_state()
         if self.auto_save:
             self.do_save()
 
@@ -87,7 +88,7 @@ class WatsonShell(Cmd):
         if len(args) == 0:
             pass
         elif len(args) == 1:
-            self.filepath = args[0] + '.json'
+            self.filepath = args[0]
         else:
             print('Usage: ' + str(self.do_rumour.__doc__))
             return False
@@ -118,18 +119,21 @@ class WatsonShell(Cmd):
             return False
         return True
 
-    def ask_replies(self) -> Optional[List[Tuple[Player, Knowledge]]]:
+    def _ask_replies(self) -> Optional[List[Tuple[Player, Knowledge]]]:
         replies = []
         while True:
             response = input("       ")
+
             if response.lower() == "abort":
                 return None
             if response.lower() == "done" and replies:
                 return replies
+
             response = response.split()
             if len(response) != 2:
                 print("Usage: <Player> <y|n> or 'done' to finish or 'abort' to abort")
                 continue
+
             player = match_player(response[0], self.context.players)
             if response[1] == "y":
                 knowledge = Knowledge.TRUE
@@ -138,7 +142,12 @@ class WatsonShell(Cmd):
             else:
                 print("Reply should be y or n")
                 continue
+
             replies.append((player, knowledge))
+
+    def _show_game_state(self):
+        formatter = KnowledgeTableFormatter()
+        print(formatter.format_knowledge_table(self.watson.knowledge_table))
 
 
 def match_player(start_of_player_name: str, players: List[Player]) -> Optional[Player]:

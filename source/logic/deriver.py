@@ -1,12 +1,12 @@
 from typing import List
 
-from source.data.card import Card
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.player import Player
-from source.data.rumour import Rumour
-from source.data.clues import Clues
-from source.data.clauses import Clauses
+from source.domain.card import Card
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.player import Player
+from source.domain.rumour import Rumour
+from source.domain.clues import Clues
+from source.domain.clauses import Clause, Clauses
 
 
 class Deriver:
@@ -34,7 +34,7 @@ class Deriver:
                 elif len(clause) == 1:
                     self.set_and_derive_true_knowledge_if_new(replier, clause[0])
 
-    def create_clause(self, player: Player, rumour_cards: List[Card]) -> List[Card]:
+    def create_clause(self, player: Player, rumour_cards: List[Card]) -> Clause:
         clause = []
         for card in rumour_cards:
             if self.knowledge_table.get(player, card) == Knowledge.TRUE:

@@ -1,6 +1,6 @@
 import unittest
 
-from source.data.clauses import Clauses
+from source.domain.clauses import Clauses
 from test.fixture.context import context_fixture, michiel, Cards, menno
 
 

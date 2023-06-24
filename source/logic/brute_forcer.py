@@ -1,10 +1,10 @@
 import math
 
-from source.data.card import Card
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.player import Player
-from source.data.clues import Clues
+from source.domain.card import Card
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.player import Player
+from source.domain.clues import Clues
 from source.logic.solution_finder import SolutionFinder, SolutionFinderTimeoutError
 
 

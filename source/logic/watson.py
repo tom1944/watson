@@ -1,12 +1,11 @@
-from source.data.context import Context
-from source.io.knowledge_table_formatter import KnowledgeTableFormatter
+from source.domain.card import Card
+from source.domain.clues import Clues
+from source.domain.context import Context
+from source.domain.knowledge import Knowledge
+from source.domain.knowledge_table import KnowledgeTable
+from source.domain.player import Player
+from source.domain.rumour import Rumour
 from source.logic.brute_forcer import BruteForcer
-from source.data.card import Card
-from source.data.knowledge import Knowledge
-from source.data.knowledge_table import KnowledgeTable
-from source.data.player import Player
-from source.data.rumour import Rumour
-from source.data.clues import Clues
 from source.logic.deriver import Deriver
 
 
@@ -51,10 +50,6 @@ class Watson:
         for rumour in clues.get_rumours():
             self.clues.add_rumour(rumour)
             self.deriver.derive_from_new_rumour(rumour)
-
-    def display_state(self) -> str:
-        formatter = KnowledgeTableFormatter()
-        return formatter.format_knowledge_table(self.knowledge_table)
 
     def get_knowledge_table(self) -> KnowledgeTable:
         return self.knowledge_table

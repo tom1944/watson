@@ -1,8 +1,8 @@
 from unittest import TestCase
 
-from source.data.clues import Clues
-from source.data.knowledge import Knowledge
-from source.data.rumour import Rumour
+from source.domain.clues import Clues
+from source.domain.knowledge import Knowledge
+from source.domain.rumour import Rumour
 from source.logic.watson import Watson
 from test.fixture.context import Cards, michiel, menno, context_fixture, tom
 
