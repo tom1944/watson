@@ -43,6 +43,21 @@ class TestWatsonShell(TestCase):
 
         self.watson_mock.add_rumour.assert_called_with(reference_rumour)
 
+    @patch('builtins.input', side_effect=["wrong n", "Tom n", "Michiel y", "done"])
+    def test_do_rumour_faulty_input(self, mock_inputs):
+        self.shell.onecmd("r Menno rood bijl eetkamer")
+
+        reference_rumour = Rumour(
+            menno,
+            [Cards.ROODHART, Cards.BIJL, Cards.EETKAMER],
+            replies=[
+                (tom, Knowledge.FALSE),
+                (michiel, Knowledge.TRUE),
+            ]
+        )
+
+        self.watson_mock.add_rumour.assert_called_with(reference_rumour)
+
     def test_match_input_string_from_set(self):
         result = watson_shell.match_input_string_from_set("hon", ["bak", "gast", "matig"])
         self.assertEqual(None, result)
@@ -58,3 +73,4 @@ class TestWatsonShell(TestCase):
 
         result = watson_shell.match_input_string_from_set("hal", ["Halter", "Hal"])
         self.assertEqual(None, result)
+

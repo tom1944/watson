@@ -131,6 +131,8 @@ class WatsonShell(Cmd):
                 print("Usage: <Player> <y|n> or 'done' to finish or 'abort' to abort")
                 continue
             player = match_player(response[0], self.context.players)
+            if not player:
+                continue
             if response[1] == "y":
                 knowledge = Knowledge.TRUE
             elif response[1] == "n":
